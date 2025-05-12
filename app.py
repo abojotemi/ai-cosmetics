@@ -652,9 +652,12 @@ def analyze():
                 with open(file_path, "rb") as img_file:
                     image_data = img_file.read()
                 MODELS = (GEMINI_MODEL, "gemini-2.0-flash", "gemini-1.5-flash")
+                ext = file_path.split('.')[-1]
+                if ext not in {"png", "jpeg", "webp", "heic", "heif"}:
+                    ext = "jpeg"
                 data = types.Part.from_bytes(
                     data=image_data,
-                    mime_type=f"image/{file_path.split('.')[-1]}",
+                    mime_type=f"image/{ext}",
                 )
                 max_retries = 3
                 backoff = 1
