@@ -113,7 +113,7 @@ Your Responsibilities:
 Important Notes:
 1. Only respond if the image pertains to human skin.
 2. If the image quality impedes clear analysis, note that certain aspects are "Unable to determine based on the provided image."
-3. If the image is not a human skin, fill all available result fields with "Not Human Skin"
+3. If the image is not human skin, fill all available result fields with "Not Human Skin"
 
 
 Always accompany your analysis with the disclaimer: "This analysis is for informational purposes only. Please consult with a dermatologist for a professional diagnosis."
@@ -135,7 +135,7 @@ class Products(BaseModel):
 
 
 class Skin(BaseModel):
-    skin_type: Literal["oily", "sensitive", "dry", "normal"] = Field(
+    skin_type: Literal["oily", "sensitive", "dry", "normal", "not skin"] = Field(
         description="Analyze the image and identify the skin type (dry, oily, normal, sensitive)."
     )
     concerns: list[str] = Field(
