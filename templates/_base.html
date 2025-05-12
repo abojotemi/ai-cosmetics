@@ -51,7 +51,7 @@
                     </li>
 
                     {% if current_user.is_authenticated %}
-                    <li class="relative" data-dropdown-toggle="userDropdown" data-dropdown-trigger="click">
+                    <li class="relative space-x-3 flex items-center" data-dropdown-toggle="userDropdown" data-dropdown-trigger="click">
                         <button type="button"
                             class="flex items-center py-2 px-3 text-foreground/80 rounded hover:bg-primary/10 md:hover:bg-transparent md:border-0 md:hover:text-primary md:p-0 transition-colors">
                             <span>{{ current_user.username }}</span>
