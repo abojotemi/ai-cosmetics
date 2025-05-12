@@ -1,0 +1,207 @@
+{% extends "_base.html" %}
+
+{% block title %}Analyze Your Skin - AI Cosmetics{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-8">Analyze
+        Your Skin</h1>
+
+    <div class="bg-background-alt/50 p-8 rounded-xl shadow-lg mb-10 border border-primary/10 backdrop-blur-lg">
+        <h2 class="text-xl font-semibold mb-4 text-foreground">Upload a clear photo of your face</h2>
+        <p class="text-foreground/70 mb-6">For best results, use natural lighting and a neutral expression. Make sure
+            your
+            face is clearly visible and centered in the frame.</p>
+
+        <form action="/analyze" method="post" enctype="multipart/form-data" class="space-y-6" id="analyze-form">
+            <div class="flex items-center justify-center w-full">
+                <label for="skin_image"
+                    class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-xl cursor-pointer bg-background border-primary/30 hover:bg-primary/5 transition-colors duration-300">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6" id="upload-text">
+                        <svg class="w-10 h-10 mb-4 text-primary" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 20 16">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                        </svg>
+                        <p class="mb-2 text-sm text-foreground/70"><span class="font-semibold">Click to upload</span> or
+                            drag
+                            and drop</p>
+                        <p class="text-xs text-foreground/50">PNG, JPG or JPEG (MAX. 10MB)</p>
+                    </div>
+                    <div class="hidden flex-col items-center justify-center pt-5 pb-6" id="preview-container">
+                        <img id="preview-image" class="max-h-60 rounded" src="" alt="Preview">
+                        <p class="mt-2 text-sm text-foreground/70">Click to change image</p>
+                    </div>
+                    <input id="skin_image" name="skin_image" type="file" class="hidden"
+                        accept="image/png, image/jpeg, image/jpg" />
+                </label>
+            </div>
+
+            <div id="processing-indicator" class="hidden">
+                <div class="flex items-center justify-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <span class="ml-3 text-foreground/70">Analyzing your skin...</span>
+                </div>
+                <div class="w-full bg-background rounded-full h-2.5 mt-4">
+                    <div id="progress-bar" class="bg-primary h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="flex items-start mb-4">
+                <div class="flex items-center h-5">
+                    <input id="consent" aria-describedby="consent-description" type="checkbox" value=""
+                        class="w-4 h-4 border border-primary/30 rounded bg-background focus:ring-3 focus:ring-primary/30"
+                        required>
+                </div>
+                <div class="ml-3 text-sm">
+                    <label for="consent" class="font-medium text-foreground">Consent to analysis</label>
+                    <p id="consent-description" class="text-xs font-normal text-foreground/50">I agree to let AI
+                        Cosmetics
+                        analyze my skin data for product recommendations. My data will be handled according to the
+                        privacy policy.</p>
+                </div>
+            </div>
+
+            <button type="submit" id="analyze-button"
+                class="w-full text-foreground bg-primary hover:bg-primary-hover focus:ring-4 focus:outline-none focus:ring-primary/30 font-medium rounded-lg text-sm px-5 py-3 text-center shadow-lg shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1">Analyze
+                My Skin</button>
+        </form>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 mb-10">
+        <div class="bg-accent/10 p-6 rounded-xl border border-accent/20">
+            <h3 class="text-lg font-semibold mb-3 text-foreground flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-accent" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Tips for Best Results
+            </h3>
+            <ul class="list-disc list-inside space-y-2 text-sm text-foreground/70">
+                <li>Use natural daylight (avoid harsh direct sunlight)</li>
+                <li>Remove makeup for more accurate analysis</li>
+                <li>Take photo straight-on, with neutral expression</li>
+                <li>Ensure your entire face is visible in the frame</li>
+                <li>Avoid heavy filters or editing that alter skin appearance</li>
+            </ul>
+        </div>
+
+        <div class="bg-secondary/10 p-6 rounded-xl border border-secondary/20">
+            <h3 class="text-lg font-semibold mb-3 text-foreground flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-secondary" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                What happens next?
+            </h3>
+            <ol class="list-decimal list-inside space-y-2 text-sm text-foreground/70">
+                <li>AI analyzes your skin type and concerns</li>
+                <li>Personalized product recommendations are generated</li>
+                <li>Nearby stores with your products are located</li>
+                <li>Custom skincare routine guidance is provided</li>
+            </ol>
+            <p class="text-xs text-foreground/50 mt-4 italic">Your photo is processed securely and is not stored longer
+                than needed
+                for analysis.</p>
+        </div>
+    </div>
+
+    <div class="bg-background-alt/50 p-8 rounded-xl shadow-lg mb-10 border border-primary/10 backdrop-blur-lg">
+        <h3 class="text-xl font-semibold mb-4 text-foreground">About Our AI Technology</h3>
+        <p class="text-foreground/70 mb-6">AI Cosmetics uses advanced computer vision algorithms to analyze your skin
+            and
+            provide personalized recommendations:</p>
+
+        <div class="grid md:grid-cols-3 gap-6 text-center">
+            <div
+                class="p-6 rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/10 shadow-md hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-primary" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <h4 class="text-md font-semibold text-foreground">Skin Typing</h4>
+                <p class="text-sm text-foreground/60 mt-2">Identifies your skin type from dry to oily, combination or
+                    normal
+                </p>
+            </div>
+
+            <div
+                class="p-6 rounded-xl bg-gradient-to-br from-secondary/5 to-accent/5 border border-secondary/10 shadow-md hover:shadow-secondary/20 transition-all duration-300 hover:-translate-y-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-secondary" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                <h4 class="text-md font-semibold text-foreground">Concern Detection</h4>
+                <p class="text-sm text-foreground/60 mt-2">Detects specific concerns like dryness, texture issues, or
+                    redness
+                </p>
+            </div>
+
+            <div
+                class="p-6 rounded-xl bg-gradient-to-br from-accent/5 to-primary/5 border border-accent/10 shadow-md hover:shadow-accent/20 transition-all duration-300 hover:-translate-y-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-4 text-accent" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <h4 class="text-md font-semibold text-foreground">Product Matching</h4>
+                <p class="text-sm text-foreground/60 mt-2">Matches your skin profile to ideal ingredients and products
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('skin_image');
+        const previewImage = document.getElementById('preview-image');
+        const uploadText = document.getElementById('upload-text');
+        const previewContainer = document.getElementById('preview-container');
+        const analyzeForm = document.getElementById('analyze-form');
+        const analyzeButton = document.getElementById('analyze-button');
+        const processingIndicator = document.getElementById('processing-indicator');
+        const progressBar = document.getElementById('progress-bar');
+
+        input.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+
+                reader.addEventListener('load', function () {
+                    previewImage.src = reader.result;
+                    uploadText.classList.add('hidden');
+                    previewContainer.classList.remove('hidden');
+                    previewContainer.classList.add('flex');
+                });
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        analyzeForm.addEventListener('submit', function (e) {
+            if (input.files.length > 0 && document.getElementById('consent').checked) {
+                analyzeButton.disabled = true;
+                analyzeButton.textContent = 'Analyzing...';
+                processingIndicator.classList.remove('hidden');
+
+                // Simulate progress for better UX
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 15;
+                    if (progress > 95) {
+                        progress = 95;
+                        clearInterval(interval);
+                    }
+                    progressBar.style.width = progress + '%';
+                }, 500);
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends "_base.html" %}
+
+{% block title %}Find Nearby Stores - AI Cosmetics{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-primary mb-6">Find Nearby Stores</h1>
+
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div class="mb-6">
+            <h2 class="text-xl font-semibold mb-3 text-gray-800">Locate Stores With Your Recommended Products</h2>
+            <p class="text-gray-600">Enter your location to find stores near you that carry the products recommended by
+                AI Cosmetics.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="md:col-span-2">
+                <div id="map" class="h-96 rounded-lg border"></div>
+            </div>
+            <div>
+                <div class="mb-6">
+                    <label for="location-input" class="block mb-2 text-sm font-medium text-gray-900">Your
+                        Location</label>
+                    <div class="flex">
+                        <input type="text" id="location-input"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"
+                            placeholder="Enter your address or zip code">
+                        <button id="search-btn"
+                            class="ml-2 text-white bg-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-lg text-sm p-2.5">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-medium text-gray-800 mb-3">Nearby Locations:</h3>
+                    <div id="locations-list" class="space-y-4 max-h-64 overflow-y-auto">
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <div class="font-medium text-gray-800">Beauty Haven</div>
+                            <div class="text-sm text-gray-600">123 Main St, Anytown</div>
+                            <div class="text-sm text-primary mt-1">0.8 miles</div>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-xs text-gray-500">Products: 3/3</span>
+                                <button class="text-xs text-gray-600 hover:text-primary flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    Show on map
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <div class="font-medium text-gray-800">Cosmetics World</div>
+                            <div class="text-sm text-gray-600">456 Market Ave, Anytown</div>
+                            <div class="text-sm text-primary mt-1">1.2 miles</div>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-xs text-gray-500">Products: 2/3</span>
+                                <button class="text-xs text-gray-600 hover:text-primary flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    Show on map
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-lg">
+                            <div class="font-medium text-gray-800">Skin & Beauty Shop</div>
+                            <div class="text-sm text-gray-600">789 Oak Blvd, Anytown</div>
+                            <div class="text-sm text-primary mt-1">2.5 miles</div>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="text-xs text-gray-500">Products: 3/3</span>
+                                <button class="text-xs text-gray-600 hover:text-primary flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    Show on map
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-accent bg-opacity-30 rounded-lg p-6">
+        <h2 class="text-lg font-semibold mb-3 text-gray-800">Store Availability Info</h2>
+        <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <li>Inventory data is updated daily</li>
+            <li>Call ahead to confirm availability of specific products</li>
+            <li>Product prices may vary by location</li>
+            <li>Some stores offer special discounts for AI Cosmetics users (look for the badge)</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize map
+        const map = L.map('map').setView([40.7128, -74.0060], 13);
+
+        // Add tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add sample markers
+        const stores = [
+            {
+                name: 'Beauty Haven',
+                address: '123 Main St, Anytown',
+                distance: '0.8 miles',
+                coordinates: { lat: 40.7128, lng: -74.0060 },
+                products: '3/3'
+            },
+            {
+                name: 'Cosmetics World',
+                address: '456 Market Ave, Anytown',
+                distance: '1.2 miles',
+                coordinates: { lat: 40.7138, lng: -74.0050 },
+                products: '2/3'
+            },
+            {
+                name: 'Skin & Beauty Shop',
+                address: '789 Oak Blvd, Anytown',
+                distance: '2.5 miles',
+                coordinates: { lat: 40.7158, lng: -74.0090 },
+                products: '3/3'
+            }
+        ];
+
+        const markers = {};
+
+        stores.forEach(store => {
+            const marker = L.marker([store.coordinates.lat, store.coordinates.lng])
+                .addTo(map)
+                .bindPopup(`<b>${store.name}</b><br>${store.address}<br><b>${store.distance}</b><br>Products: ${store.products}`);
+
+            markers[store.name] = marker;
+        });
+
+        // Set up click handlers for location items
+        document.querySelectorAll('#locations-list button').forEach((button, index) => {
+            button.addEventListener('click', function () {
+                const store = stores[index];
+                map.setView([store.coordinates.lat, store.coordinates.lng], 15);
+                markers[store.name].openPopup();
+            });
+        });
+
+        // Fit map to show all markers
+        const bounds = [];
+        stores.forEach(store => {
+            bounds.push([store.coordinates.lat, store.coordinates.lng]);
+        });
+        map.fitBounds(bounds);
+
+        // Search button click handler (simulated)
+        document.getElementById('search-btn').addEventListener('click', function () {
+            // In a real application, this would trigger a geolocation lookup
+            // and fetch nearby stores from a database
+            alert('In a real app, this would search for stores near the entered location.');
+        });
+    });
+</script>
+{% endblock %}

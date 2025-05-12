@@ -1,0 +1,174 @@
+{% extends "_base.html" %}
+
+{% block title %}Admin Dashboard - AI Cosmetics{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-section {
+        @apply mb-8 p-6 bg-white rounded-lg shadow-md;
+    }
+
+    .admin-section h2 {
+        @apply text-xl font-bold mb-4 pb-2 border-b border-gray-200 text-secondary;
+    }
+
+    .form-control {
+        @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-secondary focus:border-secondary block w-full p-2.5 mb-4;
+    }
+
+    .form-label {
+        @apply block mb-2 text-sm font-medium text-gray-900;
+    }
+
+    .checkbox-control {
+        @apply w-4 h-4 text-secondary bg-gray-100 border-gray-300 rounded focus:ring-secondary focus:ring-2 mr-2;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100 p-4 mb-6 rounded-md flex justify-between items-center">
+    <h1 class="text-2xl font-bold text-secondary">Content Management</h1>
+    <a href="{{ url_for('admin_logout') }}"
+        class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded">Logout</a>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div
+    class="mb-4 p-4 {% if category == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %} rounded-lg">
+    {{ message }}
+</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<form method="POST" action="{{ url_for('admin') }}">
+    <input type="hidden" name="action" value="update_content">
+
+    <div class="admin-section">
+        <h2>General Settings</h2>
+        <div class="mb-4">
+            <label for="page_title" class="form-label">Page Title</label>
+            <input type="text" id="page_title" name="page_title" class="form-control" value="{{ content.page_title }}">
+        </div>
+    </div>
+
+    <div class="admin-section">
+        <h2>Hero Section</h2>
+        <div class="mb-4">
+            <label for="hero_title" class="form-label">Hero Title</label>
+            <input type="text" id="hero_title" name="hero_title" class="form-control" value="{{ content.hero_title }}">
+        </div>
+        <div class="mb-4">
+            <label for="hero_subtitle" class="form-label">Hero Subtitle</label>
+            <textarea id="hero_subtitle" name="hero_subtitle" rows="3"
+                class="form-control">{{ content.hero_subtitle }}</textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="cta_primary" class="form-label">Primary CTA Text</label>
+                <input type="text" id="cta_primary" name="cta_primary" class="form-control"
+                    value="{{ content.cta_primary }}">
+            </div>
+            <div>
+                <label for="primary_cta_link" class="form-label">Primary CTA Link</label>
+                <input type="text" id="primary_cta_link" name="primary_cta_link" class="form-control"
+                    value="{{ content.primary_cta_link }}">
+            </div>
+            <div>
+                <label for="cta_secondary" class="form-label">Secondary CTA Text</label>
+                <input type="text" id="cta_secondary" name="cta_secondary" class="form-control"
+                    value="{{ content.cta_secondary }}">
+            </div>
+            <div>
+                <label for="secondary_cta_link" class="form-label">Secondary CTA Link</label>
+                <input type="text" id="secondary_cta_link" name="secondary_cta_link" class="form-control"
+                    value="{{ content.secondary_cta_link }}">
+            </div>
+        </div>
+        <div class="mb-4">
+            <label for="hero_image" class="form-label">Hero Image URL</label>
+            <input type="text" id="hero_image" name="hero_image" class="form-control" value="{{ content.hero_image }}">
+        </div>
+        <div class="mb-4">
+            <label for="hero_image_alt" class="form-label">Hero Image Alt Text</label>
+            <input type="text" id="hero_image_alt" name="hero_image_alt" class="form-control"
+                value="{{ content.hero_image_alt }}">
+        </div>
+    </div>
+
+    <div class="admin-section">
+        <h2>How It Works Section</h2>
+        <div class="mb-4">
+            <label class="inline-flex items-center">
+                <input type="checkbox" name="show_how_it_works" class="checkbox-control" {% if content.show_how_it_works
+                    %}checked{% endif %}>
+                <span>Show How It Works Section</span>
+            </label>
+        </div>
+        <div class="mb-4">
+            <label for="how_it_works_title" class="form-label">Section Title</label>
+            <input type="text" id="how_it_works_title" name="how_it_works_title" class="form-control"
+                value="{{ content.how_it_works_title }}">
+        </div>
+
+        {% for step in content.steps %}
+        <div class="p-4 border border-gray-200 rounded-lg mb-4">
+            <h3 class="font-medium mb-3">Step {{ loop.index }}</h3>
+            <div class="mb-3">
+                <label for="step_{{ loop.index0 }}_title" class="form-label">Title</label>
+                <input type="text" id="step_{{ loop.index0 }}_title" name="step_{{ loop.index0 }}_title"
+                    class="form-control" value="{{ step.title }}">
+            </div>
+            <div class="mb-3">
+                <label for="step_{{ loop.index0 }}_description" class="form-label">Description</label>
+                <textarea id="step_{{ loop.index0 }}_description" name="step_{{ loop.index0 }}_description" rows="2"
+                    class="form-control">{{ step.description }}</textarea>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="admin-section">
+        <h2>CTA Section</h2>
+        <div class="mb-4">
+            <label class="inline-flex items-center">
+                <input type="checkbox" name="show_cta_section" class="checkbox-control" {% if content.show_cta_section
+                    %}checked{% endif %}>
+                <span>Show CTA Section</span>
+            </label>
+        </div>
+        <div class="mb-4">
+            <label for="cta_section_title" class="form-label">CTA Title</label>
+            <input type="text" id="cta_section_title" name="cta_section_title" class="form-control"
+                value="{{ content.cta_section_title }}">
+        </div>
+        <div class="mb-4">
+            <label for="cta_section_desc" class="form-label">CTA Description</label>
+            <textarea id="cta_section_desc" name="cta_section_desc" rows="3"
+                class="form-control">{{ content.cta_section_desc }}</textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="cta_section_button" class="form-label">Button Text</label>
+                <input type="text" id="cta_section_button" name="cta_section_button" class="form-control"
+                    value="{{ content.cta_section_button }}">
+            </div>
+            <div>
+                <label for="cta_section_link" class="form-label">Button Link</label>
+                <input type="text" id="cta_section_link" name="cta_section_link" class="form-control"
+                    value="{{ content.cta_section_link }}">
+            </div>
+        </div>
+    </div>
+
+    <div class="flex justify-end mb-8">
+        <button type="submit"
+            class="text-white bg-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary focus:ring-opacity-50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+            Save Changes
+        </button>
+    </div>
+</form>
+{% endblock %}

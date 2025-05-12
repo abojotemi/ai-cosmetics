@@ -1,0 +1,34 @@
+{% extends "_base.html" %}
+
+{% block title %}Admin Login - AI Cosmetics{% endblock %}
+
+{% block content %}
+<div class="flex justify-center items-center min-h-[60vh]">
+    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold text-center text-secondary mb-6">Admin Login</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div
+            class="mb-4 p-4 {% if category == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %} rounded-lg">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('admin') }}">
+            <div class="mb-6">
+                <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Admin Password</label>
+                <input type="password" id="password" name="password"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-secondary focus:border-secondary block w-full p-2.5"
+                    required>
+            </div>
+            <input type="hidden" name="action" value="login">
+            <button type="submit"
+                class="w-full text-white bg-secondary hover:bg-secondary-dark focus:ring-4 focus:outline-none focus:ring-secondary focus:ring-opacity-50 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Login</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

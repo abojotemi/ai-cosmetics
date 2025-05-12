@@ -1,0 +1,372 @@
+{% extends "_base.html" %}
+
+{% block title %}Your Skin Analysis Results - SkinCare AI{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold text-primary mb-8">Your Skin Analysis Results</h1>
+
+    <div class="grid md:grid-cols-3 gap-6 mb-12">
+        <!-- Skin Profile -->
+        <div class="md:col-span-1 bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">Your Skin Profile</h2>
+
+                <div class="mb-4 pb-4 border-b border-gray-100">
+                    <span class="text-sm font-medium text-gray-700">Skin Type:</span>
+                    <span class="ml-2 text-primary font-medium">{{ results.analysis.skin_type|capitalize }}</span>
+                </div>
+
+                <div class="mb-4 pb-4 border-b border-gray-100">
+                    <span class="text-sm font-medium text-gray-700">Key Concerns:</span>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        {% for concern in results.analysis.concerns %}
+                        <span class="px-3 py-1 rounded-full text-xs font-medium bg-secondary/10 text-secondary">{{
+                            concern|capitalize }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="text-md font-semibold text-gray-800 mb-2">General Tips:</h3>
+                    <ul class="list-disc list-inside space-y-1 text-sm text-gray-600">
+                        {% for tip in results.analysis.general_tips %}
+                        <li>{{ tip }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-4 flex justify-center items-center">
+                <img src="{{ url_for('static', filename=results.image_path) }}" alt="Your skin image"
+                    class="max-h-48 max-w-full rounded">
+            </div>
+        </div>
+
+        <!-- Recommended Products -->
+        <div class="md:col-span-2 bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">AI-Recommended Products</h2>
+                <p class="text-sm text-gray-600 mb-6">Based on your skin analysis, our AI has selected these products
+                    specifically for your {{ results.analysis.skin_type }} skin:</p>
+
+                <div class="space-y-6">
+                    {% for product in results.analysis.products %}
+                    <div class="p-4 rounded-lg border border-primary/10 bg-primary/5 hover:shadow-md transition-shadow">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 bg-primary/20 rounded-full p-3 mr-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-primary" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-800">{{ product.type }}</h3>
+                                <p class="text-sm text-gray-600 mt-1">{{ product.purpose }}</p>
+
+                                <div class="mt-3">
+                                    <span class="text-xs font-medium text-gray-700">Key Ingredients:</span>
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        {% for ingredient in product.key_ingredients %}
+                                        <span class="px-2 py-0.5 bg-accent/10 text-accent text-xs rounded">{{
+                                            ingredient }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4 mt-4">
+                                    <div>
+                                        <span class="text-xs font-medium text-gray-700">Usage:</span>
+                                        <p class="text-sm text-gray-600 mt-1">{{ product.usage }}</p>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs font-medium text-gray-700">Benefit:</span>
+                                        <p class="text-sm text-gray-600 mt-1">{{ product.benefit }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if not results.map_file %}
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Find Your Recommended Products Nearby</h2>
+
+        {% if results.user_lat and results.user_lon %}
+        <div class="p-6 bg-gray-50 rounded-lg text-center">
+            <p class="text-gray-600 mb-4">Searching for nearby stores...</p>
+            <p class="text-sm text-gray-500">Please wait while we find stores in your area.</p>
+            <div class="mt-4">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            </div>
+        </div>
+        {% elif history_view %}
+        <div class="text-center p-8">
+            <p class="text-gray-600 mb-6">Would you like to find stores near your current location that may carry these
+                products?</p>
+
+            <button id="find-stores-btn"
+                class="px-6 py-3 bg-primary text-white font-medium rounded-lg shadow-lg hover:bg-primary-dark transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Find Nearby Stores Now
+            </button>
+
+            <div id="location-status" class="mt-4 text-sm text-gray-500 hidden">Accessing your location...</div>
+        </div>
+        {% else %}
+        <div class="p-6 bg-gray-50 rounded-lg text-center">
+            <p class="text-gray-600 mb-4">No nearby stores information available.</p>
+            <p class="text-sm text-gray-500">Enable location sharing during skin analysis to see stores in your area.
+            </p>
+
+            <a href="/analyze" class="mt-6 inline-block px-6 py-2 bg-primary text-white font-medium rounded-lg">
+                Try Again With Location
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Find Your Recommended Products Nearby</h2>
+
+        {% if results.using_mock_data %}
+        <div class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p class="text-sm text-yellow-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Showing demonstration data. These stores are for illustration purposes only.
+            </p>
+        </div>
+        {% endif %}
+
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="md:col-span-2">
+                <iframe src="{{ url_for('static', filename=results.map_file) }}"
+                    class="w-full h-96 rounded-lg border border-gray-200"></iframe>
+            </div>
+            <div>
+                <h3 class="font-medium text-gray-800 mb-3">Nearby Cosmetics Stores:</h3>
+                {% if results.nearby_stores %}
+                <div class="space-y-4 max-h-80 overflow-y-auto pr-2">
+                    {% for store in results.nearby_stores %}
+                    <div class="p-3 bg-gray-50 rounded-lg hover:bg-primary/5 transition-colors">
+                        <div class="flex justify-between items-start">
+                            <div class="font-medium text-gray-800">{{ store.name }}</div>
+                            <span class="px-2 py-0.5 bg-gray-200 text-gray-700 text-xs rounded">{{ store.store_type
+                                }}</span>
+                        </div>
+                        <div class="text-sm text-gray-600">{{ store.address }}</div>
+                        <div class="text-sm text-primary mt-1">{{ store.distance }}</div>
+
+                        {% if store.products_likely %}
+                        <div class="mt-2">
+                            <span class="text-xs font-medium text-gray-700">May have:</span>
+                            <div class="flex flex-wrap gap-1 mt-1">
+                                {% for product in store.products_likely %}
+                                <span
+                                    class="px-2 py-0.5 {% if 'Most' in product %}bg-blue-100 text-blue-800{% else %}bg-green-100 text-green-800{% endif %} text-xs rounded">{{
+                                    product }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="mt-2">
+                            <a href="https://www.google.com/maps/search/?api=1&query={{ store.coordinates.lat }},{{ store.coordinates.lng }}"
+                                target="_blank" class="text-xs text-primary inline-flex items-center hover:underline">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                </svg>
+                                View in Google Maps
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="mt-4 p-3 bg-primary/5 rounded-lg border border-primary/10">
+                    <p class="text-sm text-gray-700 mb-2"><span class="font-medium">Tips:</span></p>
+                    <ul class="text-xs text-gray-600 space-y-1 list-disc list-inside">
+                        <li>Cosmetics stores are most likely to carry specialized products</li>
+                        <li>Call ahead to check if your specific recommended products are in stock</li>
+                        <li>Department stores and malls usually have multiple beauty brands</li>
+                        <li>Pharmacies typically carry basic skincare products</li>
+                    </ul>
+                </div>
+
+                <a href="https://www.google.com/maps/search/cosmetics+stores+skincare+near+me" target="_blank"
+                    class="mt-4 w-full text-primary bg-white border border-primary hover:bg-accent/10 focus:ring-4 focus:outline-none focus:ring-primary/30 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Find More Stores in Google Maps
+                </a>
+                {% else %}
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <p class="text-gray-600 mb-4">No cosmetics stores found within 5km of your location.</p>
+
+                    <form id="expand-search-form" action="{{ request.path }}" method="get" class="mt-4">
+                        <input type="hidden" name="latitude" value="{{ request.args.get('latitude') }}">
+                        <input type="hidden" name="longitude" value="{{ request.args.get('longitude') }}">
+
+                        <div class="mb-4">
+                            <label for="radius" class="block text-sm font-medium text-gray-700 mb-1">Search radius
+                                (km):</label>
+                            <select id="radius" name="radius"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                                <option value="5000">5 km</option>
+                                <option value="10000" selected>10 km</option>
+                                <option value="15000">15 km</option>
+                                <option value="20000">20 km</option>
+                            </select>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark">
+                            Search Wider Area
+                        </button>
+                    </form>
+
+                    <div class="mt-6">
+                        <a href="https://www.google.com/maps/search/cosmetics+stores+near+me" target="_blank"
+                            class="text-primary flex items-center justify-center text-sm hover:underline">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                            Search in Google Maps
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="bg-accent/10 p-6 rounded-xl border border-accent/20 mb-8">
+        <h3 class="text-lg font-semibold mb-3 text-gray-800 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-accent" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Disclaimer
+        </h3>
+        <p class="text-sm text-gray-600">This analysis is for informational purposes only. Please consult with a
+            dermatologist for a professional diagnosis.</p>
+        <p class="text-xs text-gray-500 mt-2">Our AI technology provides recommendations based on visual analysis, but
+            individual skin needs may vary. Always patch test new products.</p>
+    </div>
+
+    <div class="flex justify-center mt-8 space-x-4">
+        <a href="/analyze"
+            class="px-6 py-3 rounded-lg bg-primary text-white font-medium shadow-lg hover:bg-primary-dark transition-all transform hover:-translate-y-1">
+            Analyze Another Photo
+        </a>
+        <a href="/"
+            class="px-6 py-3 rounded-lg border border-primary text-primary font-medium hover:bg-primary/5 transition-all">
+            Back to Home
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // If we have location data but no map file, refresh the page after a short delay
+        {% if results.user_lat and results.user_lon and not results.map_file %}
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
+        {% endif %}
+
+        // Handle the find stores button click
+        const findStoresBtn = document.getElementById('find-stores-btn');
+        const locationStatus = document.getElementById('location-status');
+
+        if (findStoresBtn) {
+            findStoresBtn.addEventListener('click', () => {
+                findStoresBtn.disabled = true;
+                findStoresBtn.classList.add('opacity-50');
+                locationStatus.classList.remove('hidden');
+                locationStatus.textContent = 'Accessing your location...';
+
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        // Success callback
+                        function (position) {
+                            locationStatus.textContent = 'Location found! Searching for stores...';
+
+                            // Redirect to same page with location parameters
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            window.location.href = `${window.location.pathname}?latitude=${lat}&longitude=${lng}`;
+                        },
+                        // Error callback
+                        function (error) {
+                            findStoresBtn.disabled = false;
+                            findStoresBtn.classList.remove('opacity-50');
+
+                            let errorMessage = 'Error accessing your location';
+                            switch (error.code) {
+                                case error.PERMISSION_DENIED:
+                                    errorMessage = 'Location access denied. Please enable location services in your browser.';
+                                    break;
+                                case error.POSITION_UNAVAILABLE:
+                                    errorMessage = 'Location information is unavailable.';
+                                    break;
+                                case error.TIMEOUT:
+                                    errorMessage = 'Location request timed out. Please try again.';
+                                    break;
+                            }
+
+                            locationStatus.textContent = errorMessage;
+                            locationStatus.classList.add('text-red-500');
+                        },
+                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                    );
+                } else {
+                    locationStatus.textContent = 'Geolocation is not supported by your browser.';
+                    locationStatus.classList.add('text-red-500');
+                    findStoresBtn.disabled = false;
+                    findStoresBtn.classList.remove('opacity-50');
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

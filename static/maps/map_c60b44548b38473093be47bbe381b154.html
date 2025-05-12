@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_ee2af90ed9fc401bb66d4572b16a83fc {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.1.0/MarkerCluster.Default.css"/>
+</head>
+<body>
+    
+    
+    <div style="position: fixed; 
+        bottom: 50px; left: 50px; width: 180px; height: 200px; 
+        border:2px solid grey; z-index:9999; font-size:12px;
+        background-color: white; padding: 10px; border-radius: 5px;">
+        <p style="margin-top: 0; font-weight: bold;">Store Types</p>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+            <div style="background-color: red; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px;"></div>
+            <span>Your Location</span>
+        </div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+            <div style="background-color: blue; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px;"></div>
+            <span>Cosmetics Store</span>
+        </div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+            <div style="background-color: green; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px;"></div>
+            <span>Pharmacy</span>
+        </div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+            <div style="background-color: purple; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px;"></div>
+            <span>Beauty Shop</span>
+        </div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+            <div style="background-color: orange; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px;"></div>
+            <span>Chemist</span>
+        </div>
+        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+            <div style="background-color: pink; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px;"></div>
+            <span>Department Store</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <div style="background-color: darkblue; width: 15px; height: 15px; border-radius: 50%; margin-right: 5px;"></div>
+            <span>Shopping Mall</span>
+        </div>
+    </div>
+    
+    
+            <div class="folium-map" id="map_ee2af90ed9fc401bb66d4572b16a83fc" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_ee2af90ed9fc401bb66d4572b16a83fc = L.map(
+                "map_ee2af90ed9fc401bb66d4572b16a83fc",
+                {
+                    center: [9.0883224, 7.4085612],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 13,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_90d5df50f000f455bc3cb9694fc608f9 = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "Data by \u0026copy; \u003ca target=\"_blank\" href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_ee2af90ed9fc401bb66d4572b16a83fc);
+        
+    
+            var circle_16371f34a880dab5d74128f7b08838c8 = L.circle(
+                [9.0883224, 7.4085612],
+                {"bubblingMouseEvents": true, "color": "#4F46E5", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#4F46E5", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5000, "stroke": true, "weight": 3}
+            ).addTo(map_ee2af90ed9fc401bb66d4572b16a83fc);
+        
+    
+            circle_16371f34a880dab5d74128f7b08838c8.bindTooltip(
+                `<div>
+                     5km Search Radius
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_5d3495509db9b451e20050f10e3b0869 = L.marker(
+                [9.0883224, 7.4085612],
+                {}
+            ).addTo(map_ee2af90ed9fc401bb66d4572b16a83fc);
+        
+    
+            var icon_3406d4cc242cbf39416e95dea416e1e1 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "home", "iconColor": "white", "markerColor": "red", "prefix": "fa"}
+            );
+            marker_5d3495509db9b451e20050f10e3b0869.setIcon(icon_3406d4cc242cbf39416e95dea416e1e1);
+        
+    
+        var popup_267f1d547c5e44703e54bc73085e459d = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_571ccec19f11b509a530f819c25b3732 = $(`<div id="html_571ccec19f11b509a530f819c25b3732" style="width: 100.0%; height: 100.0%;"><b>Your Location</b></div>`)[0];
+                popup_267f1d547c5e44703e54bc73085e459d.setContent(html_571ccec19f11b509a530f819c25b3732);
+            
+        
+
+        marker_5d3495509db9b451e20050f10e3b0869.bindPopup(popup_267f1d547c5e44703e54bc73085e459d)
+        ;
+
+        
+    
+    
+            var marker_cluster_c35dd404ad8f7d0466b32f686734247f = L.markerClusterGroup(
+                {}
+            );
+            map_ee2af90ed9fc401bb66d4572b16a83fc.addLayer(marker_cluster_c35dd404ad8f7d0466b32f686734247f);
+        
+    
+            var marker_337850e4f6f2cda0702854fde5024493 = L.marker(
+                [9.089021899999999, 7.412689074416085],
+                {}
+            ).addTo(marker_cluster_c35dd404ad8f7d0466b32f686734247f);
+        
+    
+            var icon_ce97dbc787d8a28099e8594affc104f6 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "shopping-cart", "iconColor": "white", "markerColor": "darkgreen", "prefix": "fa"}
+            );
+            marker_337850e4f6f2cda0702854fde5024493.setIcon(icon_ce97dbc787d8a28099e8594affc104f6);
+        
+    
+        var popup_3778da559bde82262f19353beab7c984 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_3ef1dc41f6284b8c62ab23a695bef97c = $(`<div id="html_3ef1dc41f6284b8c62ab23a695bef97c" style="width: 100.0%; height: 100.0%;">             <div style="width: 200px;">                 <h4 style="margin: 4px 0px; color: #4F46E5;"><b>Bakan Gizo Pharmacy & Stores</b></h4>                 <div style="font-size: 12px; color: #666;">House 20 1st Avenue</div>                 <div style="font-size: 12px; color: #666;">Gwarinpa</div>                 <div style="margin-top: 8px; font-size: 11px;">                     <a href="https://www.google.com/maps/search/?api=1&query=9.089021899999999,7.412689074416085" target="_blank">View in Google Maps</a>                 </div>             </div>             </div>`)[0];
+                popup_3778da559bde82262f19353beab7c984.setContent(html_3ef1dc41f6284b8c62ab23a695bef97c);
+            
+        
+
+        marker_337850e4f6f2cda0702854fde5024493.bindPopup(popup_3778da559bde82262f19353beab7c984)
+        ;
+
+        
+    
+    
+            marker_337850e4f6f2cda0702854fde5024493.bindTooltip(
+                `<div>
+                     Bakan Gizo Pharmacy & Stores
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_de3dad8434236894e2e2b3bd1df1e243 = L.marker(
+                [9.1171188, 7.382134715436166],
+                {}
+            ).addTo(marker_cluster_c35dd404ad8f7d0466b32f686734247f);
+        
+    
+            var icon_fb75048b0e5a1d0c9b902dbf423f17e1 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "shopping-cart", "iconColor": "white", "markerColor": "darkgreen", "prefix": "fa"}
+            );
+            marker_de3dad8434236894e2e2b3bd1df1e243.setIcon(icon_fb75048b0e5a1d0c9b902dbf423f17e1);
+        
+    
+        var popup_c4ef9ac022a0a7b10051fe41e2a9017e = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_8ccf5a723a1cd7ffe0574585188e4ea8 = $(`<div id="html_8ccf5a723a1cd7ffe0574585188e4ea8" style="width: 100.0%; height: 100.0%;">             <div style="width: 200px;">                 <h4 style="margin: 4px 0px; color: #4F46E5;"><b>Big Ideas Supermarket and Pharmacy</b></h4>                 <div style="font-size: 12px; color: #666;">Plot 896 69 Road</div>                 <div style="font-size: 12px; color: #666;">Gwarinpa</div>                 <div style="margin-top: 8px; font-size: 11px;">                     <a href="https://www.google.com/maps/search/?api=1&query=9.1171188,7.382134715436166" target="_blank">View in Google Maps</a>                 </div>             </div>             </div>`)[0];
+                popup_c4ef9ac022a0a7b10051fe41e2a9017e.setContent(html_8ccf5a723a1cd7ffe0574585188e4ea8);
+            
+        
+
+        marker_de3dad8434236894e2e2b3bd1df1e243.bindPopup(popup_c4ef9ac022a0a7b10051fe41e2a9017e)
+        ;
+
+        
+    
+    
+            marker_de3dad8434236894e2e2b3bd1df1e243.bindTooltip(
+                `<div>
+                     Big Ideas Supermarket and Pharmacy
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_9d36e212cacc736ec1448c9eb1ddca3b = L.marker(
+                [9.0755695, 7.4250593],
+                {}
+            ).addTo(marker_cluster_c35dd404ad8f7d0466b32f686734247f);
+        
+    
+            var icon_23b031e9e79c8522a24c0302e44830b5 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "shopping-cart", "iconColor": "white", "markerColor": "darkgreen", "prefix": "fa"}
+            );
+            marker_9d36e212cacc736ec1448c9eb1ddca3b.setIcon(icon_23b031e9e79c8522a24c0302e44830b5);
+        
+    
+        var popup_f79f93bb3d00c0f8390f463c78db4c67 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_dc93723ae0680df08c6f2a8f28884567 = $(`<div id="html_dc93723ae0680df08c6f2a8f28884567" style="width: 100.0%; height: 100.0%;">             <div style="width: 200px;">                 <h4 style="margin: 4px 0px; color: #4F46E5;"><b>Shoprite</b></h4>                 <div style="font-size: 12px; color: #666;">Plot 1265 Bala Sokoto Way</div>                 <div style="font-size: 12px; color: #666;">Abuja</div>                 <div style="margin-top: 8px; font-size: 11px;">                     <a href="https://www.google.com/maps/search/?api=1&query=9.0755695,7.4250593" target="_blank">View in Google Maps</a>                 </div>             </div>             </div>`)[0];
+                popup_f79f93bb3d00c0f8390f463c78db4c67.setContent(html_dc93723ae0680df08c6f2a8f28884567);
+            
+        
+
+        marker_9d36e212cacc736ec1448c9eb1ddca3b.bindPopup(popup_f79f93bb3d00c0f8390f463c78db4c67)
+        ;
+
+        
+    
+    
+            marker_9d36e212cacc736ec1448c9eb1ddca3b.bindTooltip(
+                `<div>
+                     Shoprite
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_2eb04c39d2d0a32c72a82a2fd6d5e0c4 = L.marker(
+                [9.0772175, 7.4258386],
+                {}
+            ).addTo(marker_cluster_c35dd404ad8f7d0466b32f686734247f);
+        
+    
+            var icon_b926a0615e03a62f7f144efdddb0b8be = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "shopping-cart", "iconColor": "white", "markerColor": "darkgreen", "prefix": "fa"}
+            );
+            marker_2eb04c39d2d0a32c72a82a2fd6d5e0c4.setIcon(icon_b926a0615e03a62f7f144efdddb0b8be);
+        
+    
+        var popup_97ef8e7a464a91bcc696d9fcef614773 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_b639f0f103f6584ac94eb557aeb791d7 = $(`<div id="html_b639f0f103f6584ac94eb557aeb791d7" style="width: 100.0%; height: 100.0%;">             <div style="width: 200px;">                 <h4 style="margin: 4px 0px; color: #4F46E5;"><b>Game</b></h4>                 <div style="font-size: 12px; color: #666;">Ebitu Ukiwe Street</div>                 <div style="font-size: 12px; color: #666;">Abuja</div>                 <div style="margin-top: 8px; font-size: 11px;">                     <a href="https://www.google.com/maps/search/?api=1&query=9.0772175,7.4258386" target="_blank">View in Google Maps</a>                 </div>             </div>             </div>`)[0];
+                popup_97ef8e7a464a91bcc696d9fcef614773.setContent(html_b639f0f103f6584ac94eb557aeb791d7);
+            
+        
+
+        marker_2eb04c39d2d0a32c72a82a2fd6d5e0c4.bindPopup(popup_97ef8e7a464a91bcc696d9fcef614773)
+        ;
+
+        
+    
+    
+            marker_2eb04c39d2d0a32c72a82a2fd6d5e0c4.bindTooltip(
+                `<div>
+                     Game
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_00eba0ee4aeb96f02187b31dc5ccc0e2 = L.marker(
+                [9.0656797, 7.4288178],
+                {}
+            ).addTo(marker_cluster_c35dd404ad8f7d0466b32f686734247f);
+        
+    
+            var icon_7c19cdb11ce6ff72b5800b3b7d12a36e = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "building", "iconColor": "white", "markerColor": "darkblue", "prefix": "fa"}
+            );
+            marker_00eba0ee4aeb96f02187b31dc5ccc0e2.setIcon(icon_7c19cdb11ce6ff72b5800b3b7d12a36e);
+        
+    
+        var popup_ea25d077cdd8d8a65d6bc11d663d398e = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_7dbe6599fe54cbff6a9f237f31ba680a = $(`<div id="html_7dbe6599fe54cbff6a9f237f31ba680a" style="width: 100.0%; height: 100.0%;">             <div style="width: 200px;">                 <h4 style="margin: 4px 0px; color: #4F46E5;"><b>O'Neil Centre</b></h4>                 <div style="font-size: 12px; color: #666;">Ebitu Ukiwe Street</div>                 <div style="font-size: 12px; color: #666;">Abuja</div>                 <div style="margin-top: 8px; font-size: 11px;">                     <a href="https://www.google.com/maps/search/?api=1&query=9.0656797,7.4288178" target="_blank">View in Google Maps</a>                 </div>             </div>             </div>`)[0];
+                popup_ea25d077cdd8d8a65d6bc11d663d398e.setContent(html_7dbe6599fe54cbff6a9f237f31ba680a);
+            
+        
+
+        marker_00eba0ee4aeb96f02187b31dc5ccc0e2.bindPopup(popup_ea25d077cdd8d8a65d6bc11d663d398e)
+        ;
+
+        
+    
+    
+            marker_00eba0ee4aeb96f02187b31dc5ccc0e2.bindTooltip(
+                `<div>
+                     O'Neil Centre
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_76dcabb11cb99dab0453ccbfce981519 = L.marker(
+                [9.0652842, 7.4278349],
+                {}
+            ).addTo(marker_cluster_c35dd404ad8f7d0466b32f686734247f);
+        
+    
+            var icon_a5d269242bd06b5c8157a11878d8a1ae = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "shopping-cart", "iconColor": "white", "markerColor": "darkgreen", "prefix": "fa"}
+            );
+            marker_76dcabb11cb99dab0453ccbfce981519.setIcon(icon_a5d269242bd06b5c8157a11878d8a1ae);
+        
+    
+        var popup_8fa7a707b2d9d96063184154650d2af9 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_c46f0bc981d1790c13a497d92f249851 = $(`<div id="html_c46f0bc981d1790c13a497d92f249851" style="width: 100.0%; height: 100.0%;">             <div style="width: 200px;">                 <h4 style="margin: 4px 0px; color: #4F46E5;"><b>Classic</b></h4>                 <div style="font-size: 12px; color: #666;">Ebitu Ukiwe Street</div>                 <div style="font-size: 12px; color: #666;">Abuja</div>                 <div style="margin-top: 8px; font-size: 11px;">                     <a href="https://www.google.com/maps/search/?api=1&query=9.0652842,7.4278349" target="_blank">View in Google Maps</a>                 </div>             </div>             </div>`)[0];
+                popup_8fa7a707b2d9d96063184154650d2af9.setContent(html_c46f0bc981d1790c13a497d92f249851);
+            
+        
+
+        marker_76dcabb11cb99dab0453ccbfce981519.bindPopup(popup_8fa7a707b2d9d96063184154650d2af9)
+        ;
+
+        
+    
+    
+            marker_76dcabb11cb99dab0453ccbfce981519.bindTooltip(
+                `<div>
+                     Classic
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_56f6a7f879fa72169520c5eab1dbfd94 = L.marker(
+                [9.07645355, 7.4252183004624595],
+                {}
+            ).addTo(marker_cluster_c35dd404ad8f7d0466b32f686734247f);
+        
+    
+            var icon_5c528f7364d02a17fa5da3d07bd4e2ae = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "building", "iconColor": "white", "markerColor": "darkblue", "prefix": "fa"}
+            );
+            marker_56f6a7f879fa72169520c5eab1dbfd94.setIcon(icon_5c528f7364d02a17fa5da3d07bd4e2ae);
+        
+    
+        var popup_c986593619cdc125dd8706fb93cac1a5 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_08d9ac30c12ea179d7f5a31bdd8a8859 = $(`<div id="html_08d9ac30c12ea179d7f5a31bdd8a8859" style="width: 100.0%; height: 100.0%;">             <div style="width: 200px;">                 <h4 style="margin: 4px 0px; color: #4F46E5;"><b>Cosmetics Store</b></h4>                 <div style="font-size: 12px; color: #666;">Bala Sokoto Way</div>                 <div style="font-size: 12px; color: #666;">Abuja</div>                 <div style="margin-top: 8px; font-size: 11px;">                     <a href="https://www.google.com/maps/search/?api=1&query=9.07645355,7.4252183004624595" target="_blank">View in Google Maps</a>                 </div>             </div>             </div>`)[0];
+                popup_c986593619cdc125dd8706fb93cac1a5.setContent(html_08d9ac30c12ea179d7f5a31bdd8a8859);
+            
+        
+
+        marker_56f6a7f879fa72169520c5eab1dbfd94.bindPopup(popup_c986593619cdc125dd8706fb93cac1a5)
+        ;
+
+        
+    
+    
+            marker_56f6a7f879fa72169520c5eab1dbfd94.bindTooltip(
+                `<div>
+                     Cosmetics Store
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_6ff94541501a60e39147d3ead2157b06 = L.marker(
+                [9.065223, 7.4276741],
+                {}
+            ).addTo(marker_cluster_c35dd404ad8f7d0466b32f686734247f);
+        
+    
+            var icon_a2cf207490531fc8341d6969667c08e4 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "medkit", "iconColor": "white", "markerColor": "green", "prefix": "fa"}
+            );
+            marker_6ff94541501a60e39147d3ead2157b06.setIcon(icon_a2cf207490531fc8341d6969667c08e4);
+        
+    
+        var popup_2ef80a55d731c2faf3bdc80df9ec3db0 = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_25777acc5cce0e53c1f9d07594533940 = $(`<div id="html_25777acc5cce0e53c1f9d07594533940" style="width: 100.0%; height: 100.0%;">             <div style="width: 200px;">                 <h4 style="margin: 4px 0px; color: #4F46E5;"><b>Cosmetics Store</b></h4>                 <div style="font-size: 12px; color: #666;">Ebitu Ukiwe Street</div>                 <div style="font-size: 12px; color: #666;">Abuja</div>                 <div style="margin-top: 8px; font-size: 11px;">                     <a href="https://www.google.com/maps/search/?api=1&query=9.065223,7.4276741" target="_blank">View in Google Maps</a>                 </div>             </div>             </div>`)[0];
+                popup_2ef80a55d731c2faf3bdc80df9ec3db0.setContent(html_25777acc5cce0e53c1f9d07594533940);
+            
+        
+
+        marker_6ff94541501a60e39147d3ead2157b06.bindPopup(popup_2ef80a55d731c2faf3bdc80df9ec3db0)
+        ;
+
+        
+    
+    
+            marker_6ff94541501a60e39147d3ead2157b06.bindTooltip(
+                `<div>
+                     Cosmetics Store
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            map_ee2af90ed9fc401bb66d4572b16a83fc.fitBounds(
+                [[9.089021899999999, 7.412689074416085], [9.1171188, 7.382134715436166], [9.0755695, 7.4250593], [9.0772175, 7.4258386], [9.0656797, 7.4288178], [9.0652842, 7.4278349], [9.07645355, 7.4252183004624595], [9.065223, 7.4276741], [9.0883224, 7.4085612]],
+                {}
+            );
+        
+</script>
+</html>

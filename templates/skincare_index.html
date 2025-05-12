@@ -1,0 +1,186 @@
+{% extends "_base.html" %}
+
+{% block title %}SkinCare AI - AI-Powered Skincare Recommendations{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Hero Section -->
+    <div class="py-12 md:py-20">
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+                <h1 class="text-4xl font-bold text-primary mb-4">Find Your Perfect Skincare Match with AI</h1>
+                <p class="text-lg text-gray-600 mb-8">Upload a photo of your skin and let our AI recommend the perfect
+                    products for your unique needs. Find where to buy them near you instantly.</p>
+                <div class="flex space-x-4">
+                    <a href="/analyze"
+                        class="px-6 py-3 rounded-lg bg-primary text-white font-medium shadow-lg hover:bg-primary-dark transition-all transform hover:-translate-y-1">
+                        Analyze My Skin
+                    </a>
+                    <a href="/about"
+                        class="px-6 py-3 rounded-lg border border-primary text-primary font-medium hover:bg-primary-light/10 transition-all">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="rounded-xl overflow-hidden shadow-xl">
+                <img src="https://images.unsplash.com/photo-1632765854612-9b02b6ec2b15?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    alt="Skincare products" class="w-full h-auto object-cover">
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="py-12 bg-primary/50 rounded-xl my-12">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-white">How It Works</h2>
+            <p class="text-white mt-4 max-w-2xl mx-auto">Our AI-powered system makes finding your perfect skincare
+                routine simple and effective</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <!-- Step 1 -->
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all">
+                <div class="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4 mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-center mb-2">1. Take a Photo</h3>
+                <p class="text-gray-600 text-center">Upload a clear picture of your skin in natural lighting for the
+                    best results.</p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all">
+                <div class="w-16 h-16 rounded-full bg-secondary/20 flex items-center justify-center mb-4 mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-secondary" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-center mb-2">2. AI Analysis</h3>
+                <p class="text-gray-600 text-center">Our advanced AI analyzes your skin type, concerns, and needs.</p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all">
+                <div class="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mb-4 mx-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-accent" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-center mb-2">3. Get Recommendations</h3>
+                <p class="text-gray-600 text-center">Receive personalized product recommendations and find stores near
+                    you.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="py-12">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-primary">Why Choose SkinCare AI?</h2>
+            <p class="text-gray-600 mt-4 max-w-2xl mx-auto">Our cutting-edge technology makes finding the right skincare
+                products easier than ever</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Feature 1 -->
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all border border-primary/10">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-primary" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">AI-Powered Analysis</h3>
+                        <p class="text-gray-600">Our advanced AI technology analyzes over 20 aspects of your skin to
+                            provide accurate recommendations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 2 -->
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all border border-primary/10">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-primary" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Personalized Recommendations</h3>
+                        <p class="text-gray-600">Get product recommendations tailored specifically for your skin type
+                            and concerns.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 3 -->
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all border border-primary/10">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-primary" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Find Products Nearby</h3>
+                        <p class="text-gray-600">Locate stores near you that carry your recommended products with our
+                            integrated maps.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feature 4 -->
+            <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all border border-primary/10">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-primary" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Fast & Accurate</h3>
+                        <p class="text-gray-600">Get results in seconds with our high-performance AI that's trained on
+                            thousands of skin images.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="py-12 bg-gradient-to-r from-primary to-secondary rounded-xl text-white my-12">
+        <div class="text-center max-w-3xl mx-auto px-6">
+            <h2 class="text-3xl font-bold mb-4">Ready to find your perfect skincare match?</h2>
+            <p class="text-white/80 mb-8">Our AI will analyze your skin and recommend products that are perfect for your
+                unique needs.</p>
+            <a href="/analyze"
+                class="px-8 py-4 rounded-lg bg-white text-primary font-medium shadow-lg hover:bg-gray-100 transition-all transform hover:-translate-y-1">
+                Analyze My Skin Now
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

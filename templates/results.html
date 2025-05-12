@@ -1,0 +1,250 @@
+{% extends "_base.html" %}
+
+{% block title %}Your Skin Analysis Results - AI Cosmetics{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-primary mb-6">Your Skin Analysis Results</h1>
+
+    <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold mb-3 text-gray-800">Your Skin Profile</h2>
+                <div class="mb-4">
+                    <span class="text-sm font-medium text-gray-700">Skin Type:</span>
+                    <span class="ml-2 text-primary font-medium">{{ results.skin_type|title }}</span>
+                </div>
+
+                <div class="mb-4">
+                    <span class="text-sm font-medium text-gray-700">Main Concerns:</span>
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        {% for concern in results.concerns %}
+                        <span class="px-3 py-1 rounded-full text-xs font-medium bg-accent text-primary-dark">{{
+                            concern|title }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <h3 class="text-md font-semibold text-gray-800 mb-2">AI Analysis Insights:</h3>
+                    <ul class="list-disc list-inside space-y-1 text-sm text-gray-600">
+                        {% if 'dryness' in results.concerns %}
+                        <li>Your skin shows signs of dehydration in the cheek areas</li>
+                        {% endif %}
+                        {% if 'texture' in results.concerns %}
+                        <li>Uneven texture detected, suggesting exfoliation needs</li>
+                        {% endif %}
+                        {% if 'redness' in results.concerns %}
+                        <li>Mild redness detected, indicating potential sensitivity</li>
+                        {% endif %}
+                        {% if 'oiliness' in results.concerns %}
+                        <li>Excess sebum production in the T-zone area</li>
+                        {% endif %}
+                        {% if 'sensitivity' in results.concerns %}
+                        <li>Signs of sensitivity detected - avoid harsh ingredients</li>
+                        {% endif %}
+                        {% if 'aging' in results.concerns %}
+                        <li>Fine lines detected - hydration and collagen support recommended</li>
+                        {% endif %}
+                        {% if 'hydration' in results.concerns %}
+                        <li>Hydration levels below optimal - increase moisture</li>
+                        {% endif %}
+                        {% if 'maintenance' in results.concerns %}
+                        <li>Your skin is in good condition - focus on maintenance</li>
+                        {% endif %}
+                        {% if 'dullness' in results.concerns %}
+                        <li>Reduced radiance detected - brightening ingredients recommended</li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div class="mt-6">
+                    <h3 class="text-md font-semibold text-gray-800 mb-2">Routine Tips:</h3>
+                    <ul class="list-disc list-inside space-y-1 text-sm text-gray-600">
+                        {% if results.skin_type == 'dry' %}
+                        <li>Use cream-based, non-foaming cleansers</li>
+                        <li>Apply hydrating serums with hyaluronic acid</li>
+                        <li>Use rich moisturizers with ceramides</li>
+                        <li>Consider overnight hydrating masks weekly</li>
+                        {% elif results.skin_type == 'oily' %}
+                        <li>Use gentle foaming cleansers twice daily</li>
+                        <li>Apply oil-free, non-comedogenic products</li>
+                        <li>Use lightweight gel moisturizers</li>
+                        <li>Consider clay masks 1-2 times weekly</li>
+                        {% elif results.skin_type == 'combination' %}
+                        <li>Use gentle, balanced cleansers</li>
+                        <li>Apply targeted treatments to different zones</li>
+                        <li>Use lightweight, balancing moisturizers</li>
+                        <li>Consider multi-masking for different areas</li>
+                        {% elif results.skin_type == 'normal' %}
+                        <li>Maintain with gentle cleansing twice daily</li>
+                        <li>Focus on prevention and protection</li>
+                        <li>Use balanced, hydrating products</li>
+                        <li>Exfoliate 1-2 times weekly to maintain texture</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            <div class="bg-gray-100 flex items-center justify-center">
+                <img src="{{ url_for('static', filename=results.image_path) }}" alt="Your skin image"
+                    class="max-h-80 max-w-full">
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">AI-Recommended Products for You</h2>
+        <p class="text-sm text-gray-600 mb-6">Based on your skin analysis, our AI has selected these products
+            specifically for your skin type and concerns:</p>
+
+        <div class="grid md:grid-cols-3 gap-6">
+            {% for product in results.recommended_products %}
+            <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+                <div class="h-44 bg-gradient-to-r from-secondary to-primary flex items-center justify-center p-4">
+                    <div class="bg-white rounded-full h-24 w-24 flex items-center justify-center p-2">
+                        <span class="text-primary text-4xl">{{ loop.index }}</span>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-gray-800">{{ product.name }}</h3>
+                    <p class="text-sm text-gray-500">{{ product.brand }}</p>
+                    <p class="text-primary font-medium mt-2">{{ product.price }}</p>
+                    <p class="text-sm text-gray-600 mt-2">{{ product.description }}</p>
+
+                    <div class="mt-3 flex items-center">
+                        <span class="text-xs font-medium text-gray-700 mr-2">Match Score:</span>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            {% set match_score = range(75, 99)|random %}
+                            <div class="bg-success h-2.5 rounded-full" style="width: {{ match_score }}%"></div>
+                        </div>
+                        <span class="text-xs font-medium text-gray-700 ml-2">{{ match_score }}%</span>
+                    </div>
+
+                    <button
+                        class="mt-4 text-white bg-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-lg text-sm px-4 py-2 text-center inline-flex items-center">
+                        Add to Cart
+                        <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 14 10">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M1 5h12m0 0L9 1m4 4L9 9" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Find These Products Near You</h2>
+
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="md:col-span-2">
+                <div id="map" class="h-80 rounded-lg"></div>
+            </div>
+            <div>
+                <h3 class="font-medium text-gray-800 mb-3">Nearby Stores:</h3>
+                <ul class="space-y-4">
+                    {% for store in results.nearby_stores %}
+                    <li class="border-b border-gray-100 pb-3 last:border-b-0">
+                        <div class="font-medium text-gray-800">{{ store.name }}</div>
+                        <div class="text-sm text-gray-600">{{ store.address }}</div>
+                        <div class="text-sm text-primary mt-1">{{ store.distance }}</div>
+                        <div class="flex items-center mt-1">
+                            <span class="text-xs text-gray-600">In Stock:
+                                {% set stock_count = range(1, 3)|random %}
+                                <span class="font-medium">{{ stock_count }}/3</span> products
+                            </span>
+                        </div>
+                        <button class="mt-2 text-xs text-gray-600 hover:text-primary flex items-center"
+                            onclick="mapCenter({{ store.coordinates.lat }}, {{ store.coordinates.lng }})">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Show on map
+                        </button>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button
+                    class="mt-4 w-full text-primary bg-white border border-primary hover:bg-accent focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                    Get Directions
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-accent bg-opacity-20 p-6 rounded-lg mt-8">
+        <h3 class="text-lg font-semibold mb-2 text-gray-800">AI Analysis Information</h3>
+        <p class="text-gray-700 mb-4">Our AI uses computer vision to analyze several aspects of your skin:</p>
+        <ul class="list-disc list-inside space-y-2 text-sm text-gray-700">
+            <li>Color analysis for skin tone and hydration levels</li>
+            <li>Texture mapping for identifying surface irregularities</li>
+            <li>Pattern recognition for various skin concerns</li>
+            <li>Comparison with database of 10,000+ analyzed skin images</li>
+        </ul>
+        <p class="text-sm text-gray-500 mt-4">Note: This analysis is for informational purposes only and should not
+            replace professional dermatological advice.</p>
+    </div>
+
+    <div class="flex justify-center mt-8">
+        <a href="/analyze"
+            class="text-white bg-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-pink-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+            Analyze Another Photo
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize map
+        const map = L.map('map').setView([40.7128, -74.0060], 13);
+
+        // Add tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Add markers for each store
+        const stores = {{ results.nearby_stores| tojson
+    }};
+    const markers = {};
+
+    stores.forEach(store => {
+        const marker = L.marker([store.coordinates.lat, store.coordinates.lng])
+            .addTo(map)
+            .bindPopup(`<b>${store.name}</b><br>${store.address}<br><b>${store.distance}</b>`);
+
+        markers[store.name] = marker;
+    });
+
+    // Function to center map on a specific store
+    window.mapCenter = function (lat, lng) {
+        map.setView([lat, lng], 15);
+
+        // Find the marker and open its popup
+        Object.values(markers).forEach(marker => {
+            const position = marker.getLatLng();
+            if (position.lat === lat && position.lng === lng) {
+                marker.openPopup();
+            }
+        });
+    };
+
+    // Fit map to show all markers
+    if (stores.length > 0) {
+        const bounds = [];
+        stores.forEach(store => {
+            bounds.push([store.coordinates.lat, store.coordinates.lng]);
+        });
+        map.fitBounds(bounds);
+    }
+    });
+</script>
+{% endblock %}

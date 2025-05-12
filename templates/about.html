@@ -1,0 +1,151 @@
+{% extends "_base.html" %}
+
+{% block title %}About AI Cosmetics - AI Skincare Recommendations{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-primary mb-6">About AI Cosmetics</h1>
+
+    <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Our Mission</h2>
+        <p class="text-gray-700 mb-6">At AI Cosmetics, we're on a mission to revolutionize how you find skincare
+            products.
+            We believe everyone deserves personalized skincare recommendations based on their unique skin profile, not
+            generic advice.</p>
+
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">How It Works</h2>
+        <div class="grid md:grid-cols-2 gap-8 mb-6">
+            <div>
+                <h3 class="text-lg font-medium text-gray-800 mb-3">Advanced AI Analysis</h3>
+                <p class="text-gray-600">Our proprietary AI engine analyzes your skin photo to identify your skin type,
+                    concerns, and needs. It examines factors such as texture, tone, hydration levels, and sensitivity
+                    markers.</p>
+            </div>
+            <div>
+                <h3 class="text-lg font-medium text-gray-800 mb-3">Product Matching</h3>
+                <p class="text-gray-600">We match your skin profile against our database of thousands of skincare
+                    products, considering ingredients, formulations, and effectiveness for specific skin concerns.</p>
+            </div>
+            <div>
+                <h3 class="text-lg font-medium text-gray-800 mb-3">Localized Recommendations</h3>
+                <p class="text-gray-600">Our location-based service helps you find where to purchase your recommended
+                    products nearby, saving you time and hassle.</p>
+            </div>
+            <div>
+                <h3 class="text-lg font-medium text-gray-800 mb-3">Continuous Learning</h3>
+                <p class="text-gray-600">Our AI continuously improves as more users provide feedback on their results,
+                    making our recommendations increasingly accurate over time.</p>
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Our Technology</h2>
+        <p class="text-gray-700 mb-4">AI Cosmetics leverages cutting-edge computer vision and machine learning
+            algorithms
+            trained on thousands of skin images across diverse skin types, tones, and conditions.</p>
+        <p class="text-gray-700 mb-4">Our AI can identify over 30 different skin characteristics and match them to the
+            most beneficial ingredients and product formulations. We continually update our product database to ensure
+            you get the latest and most effective recommendations.</p>
+    </div>
+
+    <div class="bg-gradient-to-r from-secondary to-primary text-white rounded-lg p-8 mb-8">
+        <div class="text-center">
+            <h2 class="text-2xl font-bold mb-4">Privacy & Data Security</h2>
+            <p class="text-xl mb-4">Your privacy matters to us. Here's how we protect your data:</p>
+            <ul class="text-left max-w-2xl mx-auto space-y-2 mb-6">
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    <span>Images are processed securely and not shared with third parties</span>
+                </li>
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    <span>Your skin data is anonymized when used for AI training</span>
+                </li>
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    <span>You can request deletion of your data at any time</span>
+                </li>
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    <span>SSL encryption protects all data transfer</span>
+                </li>
+            </ul>
+            <a href="#"
+                class="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center text-primary bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100">
+                Read Full Privacy Policy
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+        <h2 class="text-2xl font-semibold mb-6 text-gray-800">Meet Our Team</h2>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="w-32 h-32 bg-gray-200 rounded-full overflow-hidden mx-auto mb-4">
+                    <img src="https://randomuser.me/api/portraits/women/24.jpg" alt="Dr. Emma Chen"
+                        class="w-full h-full object-cover">
+                </div>
+                <h3 class="font-semibold text-lg text-gray-800">Dr. Emma Chen</h3>
+                <p class="text-primary">Dermatologist & Co-founder</p>
+                <p class="text-sm text-gray-600 mt-2">10+ years in clinical dermatology. Passionate about making
+                    skincare science accessible to everyone.</p>
+            </div>
+
+            <div class="text-center">
+                <div class="w-32 h-32 bg-gray-200 rounded-full overflow-hidden mx-auto mb-4">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Alex Kim"
+                        class="w-full h-full object-cover">
+                </div>
+                <h3 class="font-semibold text-lg text-gray-800">Alex Kim</h3>
+                <p class="text-primary">AI Engineer & Co-founder</p>
+                <p class="text-sm text-gray-600 mt-2">Former AI researcher at MIT. Developed the core computer vision
+                    algorithms behind AI Cosmetics.</p>
+            </div>
+
+            <div class="text-center">
+                <div class="w-32 h-32 bg-gray-200 rounded-full overflow-hidden mx-auto mb-4">
+                    <img src="https://randomuser.me/api/portraits/women/58.jpg" alt="Maya Rodriguez"
+                        class="w-full h-full object-cover">
+                </div>
+                <h3 class="font-semibold text-lg text-gray-800">Maya Rodriguez</h3>
+                <p class="text-primary">Cosmetic Chemist</p>
+                <p class="text-sm text-gray-600 mt-2">Formulated products for leading beauty brands. Ensures our
+                    ingredient recommendations are effective and safe.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mb-12">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Ready to Find Your Perfect Skincare Match?</h2>
+        <a href="/analyze"
+            class="inline-flex justify-center items-center py-3 px-8 text-base font-medium text-center text-white rounded-lg bg-primary hover:bg-primary-dark focus:ring-4 focus:ring-pink-300">
+            Try AI Cosmetics Now
+            <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                fill="none" viewBox="0 0 14 10">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M1 5h12m0 0L9 1m4 4L9 9" />
+            </svg>
+        </a>
+    </div>
+</div>
+{% endblock %}

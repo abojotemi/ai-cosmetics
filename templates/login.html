@@ -1,0 +1,61 @@
+{% extends "_base.html" %}
+
+{% block title %}Login - AI Cosmetics{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg my-8 border border-primary/10">
+    <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-primary">Welcome Back</h1>
+        <p class="text-gray-600 mt-2">Sign in to your AI Cosmetics account</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="p-4 mb-4 text-sm rounded-lg {% if category == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}"
+        role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('login') }}">
+        <div class="mb-6">
+            <label for="email" class="block mb-2 text-sm font-medium text-gray-700">Email Address</label>
+            <input type="email" id="email" name="email"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"
+                placeholder="name@example.com" required>
+        </div>
+        <div class="mb-6">
+            <label for="password" class="block mb-2 text-sm font-medium text-gray-700">Password</label>
+            <input type="password" id="password" name="password"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5"
+                placeholder="••••••••" required>
+        </div>
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center">
+                <input id="remember-me" name="remember" type="checkbox"
+                    class="w-4 h-4 bg-gray-50 rounded border border-gray-300 focus:ring-3 focus:ring-primary">
+                <label for="remember-me" class="ml-2 block text-sm text-gray-700">
+                    Remember me
+                </label>
+            </div>
+            <a href="#" class="text-sm font-medium text-primary hover:text-primary-dark">Forgot password?</a>
+        </div>
+        <button type="submit"
+            class="w-full text-white bg-primary hover:bg-primary-dark focus:ring-4 focus:ring-primary-light font-medium rounded-lg text-sm px-5 py-3 text-center">
+            Sign in
+        </button>
+    </form>
+
+    <div class="text-center mt-6">
+        <p class="text-sm text-gray-700">
+            Don't have an account?
+            <a href="{{ url_for('register') }}" class="font-medium text-primary hover:underline">
+                Sign up
+            </a>
+        </p>
+    </div>
+</div>
+{% endblock %}

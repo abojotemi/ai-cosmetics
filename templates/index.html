@@ -1,0 +1,146 @@
+{% extends "_base.html" %}
+
+{% block title %}{{ page_title|default('AI Cosmetics - AI-Powered Skincare Recommendations') }}{% endblock %}
+
+{% block content %}
+<div class="flex flex-col md:flex-row items-center justify-between gap-10 py-12">
+    <div class="md:w-1/2">
+        <h1
+            class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-6 leading-tight">
+            {{ hero_title|default('Discover Your Perfect Skincare Routine') }}</h1>
+        <p class="text-lg text-foreground/80 mb-8">{{ hero_subtitle|default('Upload a photo of your skin and let our AI
+            recommend the perfect products for your unique needs.') }}</p>
+        <div class="flex flex-col sm:flex-row gap-4">
+            <a href="{{ primary_cta_link|default('/analyze') }}"
+                class="inline-flex justify-center items-center py-3 px-6 text-base font-medium text-center text-foreground rounded-lg bg-primary hover:bg-primary-hover focus:ring-4 focus:ring-primary/30 transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-primary/20">
+                {{ cta_primary|default('Get Started') }}
+                <svg class="w-4 h-4 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 14 10">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M1 5h12m0 0L9 1m4 4L9 9" />
+                </svg>
+            </a>
+            <a href="{{ secondary_cta_link|default('/about') }}"
+                class="inline-flex justify-center items-center py-3 px-6 text-base font-medium text-center text-foreground/80 rounded-lg border border-primary/30 hover:bg-primary/10 hover:border-primary/50 focus:ring-4 focus:ring-primary/20 transition-all duration-300">
+                {{ cta_secondary|default('Learn more') }}
+            </a>
+        </div>
+    </div>
+    <div class="md:w-1/2">
+        <img src="{{ hero_image|default('https://images.unsplash.com/photo-1632765854612-9b02b6ec2b15?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') }}"
+            class="w-full rounded-xl shadow-xl ring-1 ring-primary/20 transition-all duration-300 hover:shadow-primary/30 object-cover max-h-[500px]"
+            alt="{{ hero_image_alt|default('Skincare products') }}">
+    </div>
+</div>
+
+{% if show_how_it_works|default(true) %}
+<div class="bg-background backdrop-blur-lg rounded-xl shadow-lg p-8 my-16 border border-primary/10">
+    <h2
+        class="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+        {{ how_it_works_title|default('How It Works') }}</h2>
+
+    <div class="grid md:grid-cols-3 gap-8">
+        {% for step in steps|default([
+        {
+        'icon': 'camera',
+        'title': '1. Take a Photo',
+        'description': 'Snap a clear picture of your skin or upload an existing one.'
+        },
+        {
+        'icon': 'analyze',
+        'title': '2. AI Analysis',
+        'description': 'Our advanced AI analyzes your skin condition and needs.'
+        },
+        {
+        'icon': 'recommendations',
+        'title': '3. Get Recommendations',
+        'description': 'Receive personalized product recommendations and nearby store locations.'
+        }
+        ]) %}
+        <div class="flex flex-col items-center text-center group">
+            <div
+                class="bg-background rounded-full p-6 mb-6 transition-all duration-300 shadow-lg group-hover:bg-primary/10 group-hover:scale-110 ring-1 ring-primary/20">
+                {% if step.icon == 'camera' %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {% elif step.icon == 'analyze' %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-secondary" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                {% elif step.icon == 'recommendations' %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-accent" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {% else %}
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                {% endif %}
+            </div>
+            <h3 class="text-xl font-semibold mb-3 text-foreground">{{ step.title }}</h3>
+            <p class="text-foreground/60">{{ step.description }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if show_cta_section|default(true) %}
+<div
+    class="bg-gradient-to-r from-primary/10 to-secondary/10 backdrop-blur-lg rounded-xl p-10 my-16 border border-primary/20 shadow-lg">
+    <div class="text-center">
+        <h2 class="text-3xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">{{
+            cta_section_title|default('Ready to discover your perfect skincare match?') }}</h2>
+        <p class="text-xl mb-8 max-w-2xl mx-auto text-foreground/80">{{ cta_section_desc|default('Our AI-powered system
+            analyzes your skin conditions and matches them to the most effective products.') }}</p>
+        <a href="{{ cta_section_link|default('/analyze') }}"
+            class="inline-flex justify-center items-center py-4 px-8 text-lg font-medium text-center text-foreground bg-primary rounded-lg hover:bg-primary-hover focus:ring-4 focus:ring-primary/30 transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-primary/20">
+            {{ cta_section_button|default('Analyze My Skin Now') }}
+        </a>
+    </div>
+</div>
+{% endif %}
+
+{% if custom_sections %}
+{% for section in custom_sections %}
+<div class="my-16 {{ section.css_class|default('') }}">
+    <h2
+        class="text-3xl font-bold text-center mb-10 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+        {{ section.title }}</h2>
+
+    {% if section.type == 'text' %}
+    <div class="prose prose-invert max-w-none">
+        {{ section.content|safe }}
+    </div>
+
+    {% elif section.type == 'grid' %}
+    <div class="grid md:grid-cols-{{ section.columns|default(3) }} gap-8">
+        {% for item in section.items %}
+        <div
+            class="bg-background-alt/50 backdrop-blur-lg p-6 rounded-xl shadow-lg border border-primary/10 transition-all duration-300 hover:shadow-primary/30 hover:-translate-y-1">
+            {% if item.image %}
+            <img src="{{ item.image }}" alt="{{ item.title }}" class="w-full h-48 object-cover rounded-lg mb-4">
+            {% endif %}
+            <h3 class="font-semibold text-xl mb-3 text-foreground">{{ item.title }}</h3>
+            <p class="text-foreground/60">{{ item.description }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}

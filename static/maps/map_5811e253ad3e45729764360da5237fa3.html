@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_16fe5c78f0482807c8118b04f504475b {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_16fe5c78f0482807c8118b04f504475b" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_16fe5c78f0482807c8118b04f504475b = L.map(
+                "map_16fe5c78f0482807c8118b04f504475b",
+                {
+                    center: [9.1267449, 7.3873652],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 13,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_0d606080f656ea710c49100dfedeb3da = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "Data by \u0026copy; \u003ca target=\"_blank\" href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_16fe5c78f0482807c8118b04f504475b);
+        
+    
+            var marker_e4f774df965b72ec72c5302ac17f6e60 = L.marker(
+                [9.1267449, 7.3873652],
+                {}
+            ).addTo(map_16fe5c78f0482807c8118b04f504475b);
+        
+    
+            var icon_1c752f5128e9b43b4974d58da00445aa = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "info-sign", "iconColor": "white", "markerColor": "red", "prefix": "glyphicon"}
+            );
+            marker_e4f774df965b72ec72c5302ac17f6e60.setIcon(icon_1c752f5128e9b43b4974d58da00445aa);
+        
+    
+        var popup_970bf29709fcddc387e12f0ccfbc715e = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_b9e2498f1dc9fc8baa9e4b4317931ac1 = $(`<div id="html_b9e2498f1dc9fc8baa9e4b4317931ac1" style="width: 100.0%; height: 100.0%;">Your Location</div>`)[0];
+                popup_970bf29709fcddc387e12f0ccfbc715e.setContent(html_b9e2498f1dc9fc8baa9e4b4317931ac1);
+            
+        
+
+        marker_e4f774df965b72ec72c5302ac17f6e60.bindPopup(popup_970bf29709fcddc387e12f0ccfbc715e)
+        ;
+
+        
+    
+    
+            var circle_cced8259842cb38c6cc0c94fac2cbc01 = L.circle(
+                [9.1267449, 7.3873652],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "blue", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5000, "stroke": true, "weight": 3}
+            ).addTo(map_16fe5c78f0482807c8118b04f504475b);
+        
+    
+        var popup_64a82cf9d76f64e90ea9612fc91e00b4 = L.popup({"maxWidth": "100%"});
+
+        
+            
+                var html_3b9dd98ecf9837cd40987e5b77cbab0a = $(`<div id="html_3b9dd98ecf9837cd40987e5b77cbab0a" style="width: 100.0%; height: 100.0%;">Search Radius: 5.0km</div>`)[0];
+                popup_64a82cf9d76f64e90ea9612fc91e00b4.setContent(html_3b9dd98ecf9837cd40987e5b77cbab0a);
+            
+        
+
+        circle_cced8259842cb38c6cc0c94fac2cbc01.bindPopup(popup_64a82cf9d76f64e90ea9612fc91e00b4)
+        ;
+
+        
+    
+    
+            var marker_d5d7564f383ab152f986c6db887ff69d = L.marker(
+                [9.117118799404388, 7.382134715436166],
+                {}
+            ).addTo(map_16fe5c78f0482807c8118b04f504475b);
+        
+    
+            var icon_895ac4dd6e8c52e44f8ca30e4ee54741 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "shopping-cart", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_d5d7564f383ab152f986c6db887ff69d.setIcon(icon_895ac4dd6e8c52e44f8ca30e4ee54741);
+        
+    
+        var popup_a2e365211a72066d8aa00ac280cf981d = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_7e6b11a46b4f0495f3d08ab26f5a2aa9 = $(`<div id="html_7e6b11a46b4f0495f3d08ab26f5a2aa9" style="width: 100.0%; height: 100.0%;">             <div style='width: 200px'>                 <h4 style='margin: 0 0 5px 0;'>Big Ideas Supermarket and Pharmacy</h4>                 <p style='margin: 0 0 5px 0;'><strong>Type:</strong> Supermarket</p>                 <p style='margin: 0;'><strong>Address:</strong> Big Ideas Supermarket and Pharmacy, Plot 896 69 Road, Gwarinpa 901101, Federal Capital Territory, Nigeria</p>             </div>             </div>`)[0];
+                popup_a2e365211a72066d8aa00ac280cf981d.setContent(html_7e6b11a46b4f0495f3d08ab26f5a2aa9);
+            
+        
+
+        marker_d5d7564f383ab152f986c6db887ff69d.bindPopup(popup_a2e365211a72066d8aa00ac280cf981d)
+        ;
+
+        
+    
+    
+            var marker_763c53b2d61f9644aa1d9d863edfa988 = L.marker(
+                [9.141783499405053, 7.372297099999999],
+                {}
+            ).addTo(map_16fe5c78f0482807c8118b04f504475b);
+        
+    
+            var icon_24fbec2eec8fedd34e429d8997f5149e = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "shopping-cart", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_763c53b2d61f9644aa1d9d863edfa988.setIcon(icon_24fbec2eec8fedd34e429d8997f5149e);
+        
+    
+        var popup_4414c08d51b8219267663cf740b2b69e = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_5a605c7683f3850cb044a27e734ffe50 = $(`<div id="html_5a605c7683f3850cb044a27e734ffe50" style="width: 100.0%; height: 100.0%;">             <div style='width: 200px'>                 <h4 style='margin: 0 0 5px 0;'>Taonet Pharmacy</h4>                 <p style='margin: 0 0 5px 0;'><strong>Type:</strong> Pharmacy</p>                 <p style='margin: 0;'><strong>Address:</strong> Taonet Pharmacy, King Opepe Street, 901101, Federal Capital Territory, Nigeria</p>             </div>             </div>`)[0];
+                popup_4414c08d51b8219267663cf740b2b69e.setContent(html_5a605c7683f3850cb044a27e734ffe50);
+            
+        
+
+        marker_763c53b2d61f9644aa1d9d863edfa988.bindPopup(popup_4414c08d51b8219267663cf740b2b69e)
+        ;
+
+        
+    
+    
+            var marker_3edc324ea4c82852355964c49378249e = L.marker(
+                [9.139519099405003, 7.3693753],
+                {}
+            ).addTo(map_16fe5c78f0482807c8118b04f504475b);
+        
+    
+            var icon_d595b7612ae34bd53f58381e0abda353 = L.AwesomeMarkers.icon(
+                {"extraClasses": "fa-rotate-0", "icon": "shopping-cart", "iconColor": "white", "markerColor": "green", "prefix": "glyphicon"}
+            );
+            marker_3edc324ea4c82852355964c49378249e.setIcon(icon_d595b7612ae34bd53f58381e0abda353);
+        
+    
+        var popup_95c298ea4783d681b38a73fbbb83492d = L.popup({"maxWidth": 300});
+
+        
+            
+                var html_a63971bbba96e51355a8743f85da3a36 = $(`<div id="html_a63971bbba96e51355a8743f85da3a36" style="width: 100.0%; height: 100.0%;">             <div style='width: 200px'>                 <h4 style='margin: 0 0 5px 0;'>Tarei Pharmacy</h4>                 <p style='margin: 0 0 5px 0;'><strong>Type:</strong> Pharmacy</p>                 <p style='margin: 0;'><strong>Address:</strong> Tarei Pharmacy, King Opepe Street, 901101, Federal Capital Territory, Nigeria</p>             </div>             </div>`)[0];
+                popup_95c298ea4783d681b38a73fbbb83492d.setContent(html_a63971bbba96e51355a8743f85da3a36);
+            
+        
+
+        marker_3edc324ea4c82852355964c49378249e.bindPopup(popup_95c298ea4783d681b38a73fbbb83492d)
+        ;
+
+        
+    
+</script>
+</html>

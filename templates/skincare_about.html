@@ -1,0 +1,158 @@
+{% extends "_base.html" %}
+
+{% block title %}About SkinCare AI{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold text-primary mb-8">About SkinCare AI</h1>
+
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Our Mission</h2>
+        <p class="text-gray-600 mb-6">
+            SkinCare AI is dedicated to making personalized skincare recommendations accessible to everyone.
+            We combine advanced artificial intelligence, computer vision, and dermatological knowledge to
+            analyze your skin and recommend products that address your specific needs.
+        </p>
+
+        <div class="relative py-4">
+            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                <div class="w-full border-t border-gray-200"></div>
+            </div>
+            <div class="relative flex justify-center">
+                <span class="bg-white px-4 text-sm font-medium text-gray-500">How It Works</span>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <div>
+                <h3 class="text-lg font-semibold mb-3 text-gray-800">Skin Analysis Technology</h3>
+                <p class="text-gray-600 mb-4">
+                    Our AI uses advanced computer vision algorithms powered by Google's Gemini AI to analyze
+                    your skin from a photo. The system examines multiple aspects of your skin including:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-sm text-gray-600 ml-2">
+                    <li>Skin type classification (dry, oily, combination, normal)</li>
+                    <li>Detection of specific concerns (acne, redness, etc.)</li>
+                    <li>Analysis of texture and hydration levels</li>
+                    <li>Identification of sensitive areas</li>
+                </ul>
+            </div>
+            <div class="flex items-center justify-center">
+                <img src="https://images.unsplash.com/photo-1582616698198-f978da534162?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80"
+                    alt="AI Skin Analysis" class="rounded-lg shadow-md max-h-60">
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <div class="flex items-center justify-center order-last md:order-first">
+                <img src="https://images.unsplash.com/photo-1567721913486-6585f069b332?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=988&q=80"
+                    alt="Product Recommendations" class="rounded-lg shadow-md max-h-60">
+            </div>
+            <div>
+                <h3 class="text-lg font-semibold mb-3 text-gray-800">Personalized Recommendations</h3>
+                <p class="text-gray-600 mb-4">
+                    After analyzing your skin, our AI matches your profile to a database of skincare products
+                    and ingredients. We recommend products based on:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-sm text-gray-600 ml-2">
+                    <li>Effectiveness for your specific skin type</li>
+                    <li>Ingredients that address your concerns</li>
+                    <li>Product compatibility with sensitive skin (if applicable)</li>
+                    <li>Science-backed formulations and ingredients</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8">
+            <div>
+                <h3 class="text-lg font-semibold mb-3 text-gray-800">Local Store Mapping</h3>
+                <p class="text-gray-600 mb-4">
+                    Finding products is easy with our integrated mapping system. By sharing your location, you can:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-sm text-gray-600 ml-2">
+                    <li>Find nearby stores that carry recommended products</li>
+                    <li>Get directions to the closest retailers</li>
+                    <li>Discover specialty skincare boutiques</li>
+                    <li>Identify pharmacies and beauty stores in your area</li>
+                </ul>
+            </div>
+            <div class="flex items-center justify-center">
+                <img src="https://images.unsplash.com/photo-1526285759869-06d7a4a48f3b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+                    alt="Store Mapping" class="rounded-lg shadow-md max-h-60">
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
+        <h2 class="text-xl font-semibold mb-6 text-gray-800">Our Technology Stack</h2>
+
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+            <div class="p-4 rounded-lg border border-primary/10 bg-primary/5 flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-primary mb-4" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                <h3 class="text-lg font-semibold text-center mb-2">Google Gemini AI</h3>
+                <p class="text-sm text-gray-600 text-center">Advanced multimodal AI model that processes and analyzes
+                    skin images with high accuracy</p>
+            </div>
+
+            <div class="p-4 rounded-lg border border-secondary/10 bg-secondary/5 flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-secondary mb-4" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+                <h3 class="text-lg font-semibold text-center mb-2">Folium Maps</h3>
+                <p class="text-sm text-gray-600 text-center">Interactive mapping library for visualizing nearby store
+                    locations</p>
+            </div>
+
+            <div class="p-4 rounded-lg border border-accent/10 bg-accent/5 flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-accent mb-4" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <h3 class="text-lg font-semibold text-center mb-2">Geoapify API</h3>
+                <p class="text-sm text-gray-600 text-center">Location intelligence platform for finding nearby beauty
+                    and health retail stores</p>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <p class="text-gray-600">
+                Our application is built using Flask, a lightweight Python web framework, combined with modern
+                frontend technologies like Tailwind CSS for a beautiful, responsive user experience.
+            </p>
+        </div>
+    </div>
+
+    <div class="bg-accent/10 p-6 rounded-xl border border-accent/20 mb-12">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Privacy & Data Protection</h2>
+        <p class="text-gray-600 mb-4">
+            We take your privacy seriously. Here's how we handle your data:
+        </p>
+        <ul class="list-disc list-inside space-y-2 text-sm text-gray-600">
+            <li>Your skin images are processed securely and are not stored longer than needed for analysis</li>
+            <li>Location data is only used to find nearby stores and is not shared with third parties</li>
+            <li>We do not sell your personal information to advertisers or other companies</li>
+            <li>All data transmission is encrypted using industry-standard protocols</li>
+        </ul>
+    </div>
+
+    <div class="flex justify-center mt-8 space-x-4">
+        <a href="/analyze"
+            class="px-6 py-3 rounded-lg bg-primary text-white font-medium shadow-lg hover:bg-primary-dark transition-all transform hover:-translate-y-1">
+            Try It Now
+        </a>
+        <a href="/"
+            class="px-6 py-3 rounded-lg border border-primary text-primary font-medium hover:bg-primary/5 transition-all">
+            Back to Home
+        </a>
+    </div>
+</div>
+{% endblock %}
