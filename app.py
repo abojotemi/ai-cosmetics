@@ -157,21 +157,21 @@ def allowed_file(filename):
 # Function to get nearby stores using Geoapify API
 def get_nearby_stores(lat, lon, radius=5000, limit=10):
     try:
-        # Use valid categories supported by Geoapify API
-        categories = [
-            "commercial.health_and_beauty.cosmetics",
-            "commercial.health_and_beauty.pharmacy",
-            "commercial.health_and_beauty",
-            "commercial.chemist",
-            "commercial.department_store",
-            "commercial.shopping_mall",
-                "commercial.supermarket",
-        ]
-        
-        categories_str = ",".join(categories)
-        url = f"https://api.geoapify.com/v2/places?categories={categories_str}&filter=circle:{lon},{lat},{radius}&limit={limit}&apiKey={GEOAPIFY_API_KEY}"
-        
-        print(f"Requesting URL: {url}")
+    # Use valid categories supported by Geoapify API
+    categories = [
+        "commercial.health_and_beauty.cosmetics",
+        "commercial.health_and_beauty.pharmacy",
+        "commercial.health_and_beauty",
+        "commercial.chemist",
+        "commercial.department_store",
+        "commercial.shopping_mall",
+            "commercial.supermarket",
+    ]
+    
+    categories_str = ",".join(categories)
+    url = f"https://api.geoapify.com/v2/places?categories={categories_str}&filter=circle:{lon},{lat},{radius}&limit={limit}&apiKey={GEOAPIFY_API_KEY}"
+    
+    print(f"Requesting URL: {url}")
         print(
             f"Using Geoapify API key: {GEOAPIFY_API_KEY[:5]}...{GEOAPIFY_API_KEY[-5:] if len(GEOAPIFY_API_KEY) > 10 else ''}"
         )
@@ -300,27 +300,27 @@ def create_map(user_lat, user_lon, stores, radius=5000):
 
     # Add store markers if available
     if stores:
-        for store in stores:
-                store_lat = store["geometry"]["coordinates"][1]
-                store_lon = store["geometry"]["coordinates"][0]
-                store_name = store["properties"].get("name", "Unknown Store")
-                store_type = get_store_type(store["properties"].get("categories", []))
-                store_address = store["properties"].get("formatted", "No address available")
+    for store in stores:
+            store_lat = store["geometry"]["coordinates"][1]
+            store_lon = store["geometry"]["coordinates"][0]
+            store_name = store["properties"].get("name", "Unknown Store")
+            store_type = get_store_type(store["properties"].get("categories", []))
+            store_address = store["properties"].get("formatted", "No address available")
 
-                # Create popup content
-                popup_content = f"""
-                <div style='width: 200px'>
-                    <h4 style='margin: 0 0 5px 0;'>{store_name}</h4>
-                    <p style='margin: 0 0 5px 0;'><strong>Type:</strong> {store_type}</p>
-                    <p style='margin: 0;'><strong>Address:</strong> {store_address}</p>
-                </div>
-                """
-                
-                folium.Marker(
-                    [store_lat, store_lon],
-                    popup=folium.Popup(popup_content, max_width=300),
-                    icon=folium.Icon(color="green", icon="shopping-cart"),
-                ).add_to(m)
+            # Create popup content
+            popup_content = f"""
+            <div style='width: 200px'>
+                <h4 style='margin: 0 0 5px 0;'>{store_name}</h4>
+                <p style='margin: 0 0 5px 0;'><strong>Type:</strong> {store_type}</p>
+                <p style='margin: 0;'><strong>Address:</strong> {store_address}</p>
+            </div>
+            """
+            
+            folium.Marker(
+                [store_lat, store_lon],
+                popup=folium.Popup(popup_content, max_width=300),
+                icon=folium.Icon(color="green", icon="shopping-cart"),
+            ).add_to(m)
 
     # Save map to file
     map_file = f"maps/map_{uuid.uuid4().hex}.html"
