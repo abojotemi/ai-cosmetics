@@ -45,7 +45,7 @@ def get_store_type(categories):
         categories_list = [categories]
     else:
         categories_list = categories
-
+        
     if any("cosmetics" in cat for cat in categories_list):
         return "Cosmetics Store"
     elif any("pharmacy" in cat for cat in categories_list):
@@ -157,25 +157,25 @@ def allowed_file(filename):
 # Function to get nearby stores using Geoapify API
 def get_nearby_stores(lat, lon, radius=5000, limit=10):
     try:
-        # Use valid categories supported by Geoapify API
-        categories = [
-            "commercial.health_and_beauty.cosmetics",
-            "commercial.health_and_beauty.pharmacy",
-            "commercial.health_and_beauty",
-            "commercial.chemist",
-            "commercial.department_store",
-            "commercial.shopping_mall",
+    # Use valid categories supported by Geoapify API
+    categories = [
+        "commercial.health_and_beauty.cosmetics",
+        "commercial.health_and_beauty.pharmacy",
+        "commercial.health_and_beauty",
+        "commercial.chemist",
+        "commercial.department_store",
+        "commercial.shopping_mall",
             "commercial.supermarket",
-        ]
-
-        categories_str = ",".join(categories)
-        url = f"https://api.geoapify.com/v2/places?categories={categories_str}&filter=circle:{lon},{lat},{radius}&limit={limit}&apiKey={GEOAPIFY_API_KEY}"
-
-        print(f"Requesting URL: {url}")
+    ]
+    
+    categories_str = ",".join(categories)
+    url = f"https://api.geoapify.com/v2/places?categories={categories_str}&filter=circle:{lon},{lat},{radius}&limit={limit}&apiKey={GEOAPIFY_API_KEY}"
+    
+    print(f"Requesting URL: {url}")
         print(
             f"Using Geoapify API key: {GEOAPIFY_API_KEY[:5]}...{GEOAPIFY_API_KEY[-5:] if len(GEOAPIFY_API_KEY) > 10 else ''}"
         )
-
+    
         response = requests.get(url, timeout=10)  # Add timeout to prevent hanging
         response.raise_for_status()  # Raise an exception for bad status codes
 
@@ -185,7 +185,7 @@ def get_nearby_stores(lat, lon, radius=5000, limit=10):
         # Print the number of features found
         features_count = len(features)
         print(f"Found {features_count} stores nearby")
-
+        
         if features_count > 0:
             first_store = features[0]
             print("Sample store data:")
@@ -217,7 +217,7 @@ def get_mock_stores(lat, lon, radius=5000, count=5):
     """Generate mock store data when API fails"""
     import random
     from math import cos, sin, pi, sqrt
-
+    
     mock_stores = []
     store_types = [
         {"name": "Beauty Paradise", "type": "commercial.health_and_beauty.cosmetics"},
@@ -228,32 +228,32 @@ def get_mock_stores(lat, lon, radius=5000, count=5):
         {"name": "Fashion Center Mall", "type": "commercial.shopping_mall"},
         {"name": "SuperMarket Plus", "type": "commercial.supermarket"},
     ]
-
+    
     radius_km = radius / 1000
-
+    
     for i in range(count):
         # Generate a random point within the radius
         r = radius_km * sqrt(random.random())
         theta = random.random() * 2 * pi
-
+        
         # Convert to lat/lon offset (approximate)
         dx = r * cos(theta)
         dy = r * sin(theta)
-
+        
         # 111,111 meters is roughly 1 degree of latitude
         # Longitude degrees vary based on latitude
         lat_offset = dy / 111.111
         lon_offset = dx / (111.111 * cos(lat * pi / 180))
-
+        
         store_lat = lat + lat_offset
         store_lon = lon + lon_offset
-
+        
         # Pick a random store type
         store_info = random.choice(store_types)
-
+        
         # Calculate distance in meters
         distance = r * 1000
-
+        
         mock_store = {
             "properties": {
                 "name": f"{store_info['name']} #{i+1}",
@@ -270,7 +270,7 @@ def get_mock_stores(lat, lon, radius=5000, count=5):
             "is_mock": True,
         }
         mock_stores.append(mock_store)
-
+    
     print(f"Generated {count} mock stores for demonstration")
     return mock_stores
 
@@ -300,7 +300,7 @@ def create_map(user_lat, user_lon, stores, radius=5000):
 
     # Add store markers if available
     if stores:
-        for store in stores:
+    for store in stores:
             store_lat = store["geometry"]["coordinates"][1]
             store_lon = store["geometry"]["coordinates"][0]
             store_name = store["properties"].get("name", "Unknown Store")
@@ -315,7 +315,7 @@ def create_map(user_lat, user_lon, stores, radius=5000):
                 <p style='margin: 0;'><strong>Address:</strong> {store_address}</p>
             </div>
             """
-
+            
             folium.Marker(
                 [store_lat, store_lon],
                 popup=folium.Popup(popup_content, max_width=300),
@@ -351,14 +351,14 @@ def index():
 def login():
     if current_user.is_authenticated:
         return redirect(url_for("index"))
-
+        
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
         remember = "remember" in request.form
-
+        
         user = User.query.filter_by(email=email).first()
-
+        
         if user and user.check_password(password):
             login_user(user, remember=remember)
             flash("Login successful!", "success")
@@ -366,7 +366,7 @@ def login():
             return redirect(next_page or url_for("index"))
         else:
             flash("Invalid email or password. Please try again.", "error")
-
+            
     return render_template("login.html", current_year=datetime.datetime.now().year)
 
 
@@ -374,7 +374,7 @@ def login():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for("index"))
-
+        
     if request.method == "POST":
         username = request.form.get("username")
         email = request.form.get("email")
@@ -382,35 +382,35 @@ def register():
         confirm_password = request.form.get("confirm_password")
         first_name = request.form.get("first_name")
         last_name = request.form.get("last_name")
-
+        
         # Check if passwords match
         if password != confirm_password:
             flash("Passwords do not match.", "error")
             return redirect(url_for("register"))
-
+            
         # Check if username or email already exists
         if User.query.filter_by(username=username).first():
             flash("Username already exists. Please choose another one.", "error")
             return redirect(url_for("register"))
-
+            
         if User.query.filter_by(email=email).first():
             flash(
                 "Email already registered. Please login or use another email.", "error"
             )
             return redirect(url_for("register"))
-
+        
         # Create new user
         new_user = User(
             username=username, email=email, first_name=first_name, last_name=last_name
         )
         new_user.set_password(password)
-
+        
         db.session.add(new_user)
         db.session.commit()
-
+        
         flash("Account created successfully! You can now login.", "success")
         return redirect(url_for("login"))
-
+    
     return render_template("register.html", current_year=datetime.datetime.now().year)
 
 
@@ -442,15 +442,15 @@ def profile():
 @login_required
 def view_analysis(analysis_id):
     analysis = Analysis.query.get_or_404(analysis_id)
-
+    
     # Ensure user can only view their own analysis
     if analysis.user_id != current_user.id:
         flash("You don't have permission to view this analysis.", "error")
         return redirect(url_for("profile"))
-
+    
     # Convert stored JSON string back to dict
     analysis_data = json.loads(analysis.result_data)
-
+    
     # Initialize results with analysis data and image path
     results = {
         "analysis": analysis_data,
@@ -459,17 +459,17 @@ def view_analysis(analysis_id):
         "nearby_stores": [],
         "using_mock_data": False,
     }
-
+    
     # Get user's location data from request if they want to see nearby stores now
     user_lat = request.args.get("latitude", type=float)
     user_lon = request.args.get("longitude", type=float)
     search_radius = request.args.get("radius", 5000, type=int)
-
+    
     if user_lat and user_lon:
         try:
             # Find nearby stores using current location
             stores = get_nearby_stores(user_lat, user_lon, radius=search_radius)
-
+            
             # Check if we're using mock data
             if stores and len(stores) > 0 and stores[0].get("is_mock", False):
                 results["using_mock_data"] = True
@@ -477,18 +477,18 @@ def view_analysis(analysis_id):
                     "Using demonstration data for nearby stores since the location API is currently unavailable. These stores are fictional.",
                     "warning",
                 )
-
+            
             if stores and len(stores) > 0:
                 map_file = create_map(user_lat, user_lon, stores, radius=search_radius)
-
+                
                 # Process store data for template
                 nearby_stores = []
                 for store in stores:
                     props = store["properties"]
-
+                    
                     # Get store name or use a default
                     name = props.get("name", "Cosmetics Store")
-
+                    
                     # Get address components
                     street = props.get("street", "")
                     housenumber = props.get("housenumber", "")
@@ -497,13 +497,13 @@ def view_analysis(analysis_id):
                     )
                     city = props.get("city", "")
                     full_address = f"{address}, {city}".strip(", ")
-
+                    
                     # Calculate distance in km
                     distance = props.get("distance", 1000) / 1000
-
+                    
                     # Determine what products might be available based on store type
                     store_categories = props.get("categories", "")
-
+                    
                     # Ensure store_categories is a list
                     if isinstance(store_categories, str):
                         if "," in store_categories:
@@ -514,9 +514,9 @@ def view_analysis(analysis_id):
                         store_categories_list = (
                             store_categories if store_categories else []
                         )
-
+                    
                     products_likely = []
-
+                    
                     # Different store types will have different recommended products
                     if any("cosmetics" in cat for cat in store_categories_list):
                         # Cosmetics stores most likely have all recommended products
@@ -553,21 +553,21 @@ def view_analysis(analysis_id):
                     ):
                         # Department stores likely have most products but worth calling ahead
                         products_likely.append("Most skincare products")
-
+                    
                     nearby_stores.append(
                         {
-                            "name": name,
-                            "address": full_address or "Address not available",
-                            "distance": f"{distance:.1f} km",
-                            "coordinates": {
-                                "lat": props.get("lat"),
-                                "lng": props.get("lon"),
-                            },
-                            "products_likely": products_likely,
+                        "name": name,
+                        "address": full_address or "Address not available",
+                        "distance": f"{distance:.1f} km",
+                        "coordinates": {
+                            "lat": props.get("lat"),
+                            "lng": props.get("lon"),
+                        },
+                        "products_likely": products_likely,
                             "store_type": get_store_type(store_categories_list),
                         }
                     )
-
+                
                 results["map_file"] = map_file.replace("static/", "")
                 results["nearby_stores"] = nearby_stores
             else:
@@ -578,7 +578,7 @@ def view_analysis(analysis_id):
                     popup="<b>Your Location</b>",
                     icon=folium.Icon(color="red", icon="home", prefix="fa"),
                 ).add_to(m)
-
+                
                 # Add a search radius circle
                 folium.Circle(
                     radius=search_radius,
@@ -589,20 +589,20 @@ def view_analysis(analysis_id):
                     fill_opacity=0.1,
                     tooltip=f"{search_radius/1000:.0f}km Search Radius - No stores found in this area",
                 ).add_to(m)
-
+                
                 # Save map to file
                 map_file = f"static/maps/map_{uuid.uuid4().hex}.html"
                 m.save(os.path.join(app.root_path, map_file))
-
+                
                 results["map_file"] = map_file.replace("static/", "")
                 results["nearby_stores"] = []
-
+                
                 # Flash a message to the user
                 flash(
                     f"No cosmetics stores found within {search_radius/1000:.0f}km of your location. Try increasing the search radius or searching in a different location.",
                     "info",
                 )
-
+                
         except Exception as e:
             print(f"Error finding nearby stores: {e}")
             flash(
@@ -610,7 +610,7 @@ def view_analysis(analysis_id):
                 "error",
             )
             # Continue without map if there's an error
-
+    
     return render_template(
         "skincare_results.html",
         results=results,
@@ -693,7 +693,7 @@ def analyze():
                     except APIError as e:
                         print(f"APIError: {e.message}")
                         raise
-
+                
                 # Store analysis in database if user is logged in
                 if current_user.is_authenticated:
                     new_analysis = Analysis(
@@ -703,7 +703,7 @@ def analyze():
                     )
                     db.session.add(new_analysis)
                     db.session.commit()
-
+                
                 # Initialize variables
                 map_file = None
                 nearby_stores = []
@@ -714,7 +714,7 @@ def analyze():
                         stores = get_nearby_stores(
                             user_lat, user_lon, radius=search_radius
                         )
-
+                        
                         # Check if we're using mock data
                         if (
                             stores
@@ -726,7 +726,7 @@ def analyze():
                                 "Using demonstration data for nearby stores since the location API is currently unavailable. These stores are fictional.",
                                 "warning",
                             )
-
+                        
                         if stores and len(stores) > 0:
                             map_file = create_map(
                                 user_lat, user_lon, stores, radius=search_radius
@@ -735,10 +735,10 @@ def analyze():
                             # Process store data for template
                             for store in stores:
                                 props = store["properties"]
-
+                                
                                 # Get store name or use a default
                                 name = props.get("name", "Cosmetics Store")
-
+                                
                                 # Get address components
                                 street = props.get("street", "")
                                 housenumber = props.get("housenumber", "")
@@ -749,13 +749,13 @@ def analyze():
                                 )
                                 city = props.get("city", "")
                                 full_address = f"{address}, {city}".strip(", ")
-
+                                
                                 # Calculate distance in km
                                 distance = props.get("distance", 1000) / 1000
-
+                                
                                 # Determine what products might be available based on store type
                                 store_categories = props.get("categories", "")
-
+                                
                                 # Ensure store_categories is a list
                                 if isinstance(store_categories, str):
                                     if "," in store_categories:
@@ -768,9 +768,9 @@ def analyze():
                                     store_categories_list = (
                                         store_categories if store_categories else []
                                     )
-
+                                
                                 products_likely = []
-
+                                
                                 # Different store types will have different recommended products
                                 if any(
                                     "cosmetics" in cat for cat in store_categories_list
@@ -812,18 +812,18 @@ def analyze():
                                 ):
                                     # Department stores likely have most products but worth calling ahead
                                     products_likely.append("Most skincare products")
-
+                                
                                 nearby_stores.append(
                                     {
-                                        "name": name,
+                                    "name": name,
                                         "address": full_address
                                         or "Address not available",
-                                        "distance": f"{distance:.1f} km",
-                                        "coordinates": {
-                                            "lat": props.get("lat"),
-                                            "lng": props.get("lon"),
-                                        },
-                                        "products_likely": products_likely,
+                                    "distance": f"{distance:.1f} km",
+                                    "coordinates": {
+                                        "lat": props.get("lat"),
+                                        "lng": props.get("lon"),
+                                    },
+                                    "products_likely": products_likely,
                                         "store_type": get_store_type(
                                             store_categories_list
                                         ),
@@ -837,7 +837,7 @@ def analyze():
                                 popup="<b>Your Location</b>",
                                 icon=folium.Icon(color="red", icon="home", prefix="fa"),
                             ).add_to(m)
-
+                            
                             # Add a search radius circle
                             folium.Circle(
                                 radius=search_radius,
@@ -848,17 +848,17 @@ def analyze():
                                 fill_opacity=0.1,
                                 tooltip=f"{search_radius/1000:.0f}km Search Radius - No stores found in this area",
                             ).add_to(m)
-
+                            
                             # Save map to file
                             map_file = f"static/maps/map_{uuid.uuid4().hex}.html"
                             m.save(os.path.join(app.root_path, map_file))
-
+                            
                             # Flash a message to the user
                             flash(
                                 f"No cosmetics stores found within {search_radius/1000:.0f}km of your location. Try increasing the search radius or searching in a different location.",
                                 "info",
                             )
-
+                    
                     except Exception as e:
                         print(f"Error creating map: {e}")
                         flash(
@@ -866,7 +866,7 @@ def analyze():
                             "error",
                         )
                         # If map creation fails, continue without the map
-
+                
                 # Store results in session
                 session["analysis_result"] = analysis_result
                 session["image_path"] = os.path.join("uploads", unique_filename)

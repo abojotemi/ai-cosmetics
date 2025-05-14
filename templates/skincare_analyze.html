@@ -13,113 +13,514 @@
 {% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="bg-white rounded-xl shadow-lg p-6 border border-primary/10">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Upload Your Skin Image</h2>
-        
-        <form method="POST" enctype="multipart/form-data" class="space-y-6" id="uploadForm">
-            <div class="space-y-4">
-                <div class="flex items-center justify-center w-full">
-                    <label for="skin_image" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-                        <div class="flex flex-col items-center justify-center pt-5 pb-6" id="uploadPrompt">
-                            <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                            </svg>
-                            <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                            <p class="text-xs text-gray-500">PNG, JPG or JPEG (MAX. 10MB)</p>
-                        </div>
-                        <img id="imagePreview" class="hidden w-full h-full object-contain rounded-lg" alt="Preview">
-                    </label>
-                    <input id="skin_image" name="skin_image" type="file" class="hidden" accept="image/*" onchange="previewImage(this)">
-                </div>
-                
-                <div id="previewControls" class="hidden flex justify-center space-x-4">
-                    <button type="button" onclick="retakePhoto()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                        Retake Photo
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h1 class="text-3xl font-bold text-primary mb-8">Analyze Your Skin</h1>
+
+    <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
+        <form action="/analyze" method="post" enctype="multipart/form-data" class="space-y-6" id="analyze-form">
+            <div>
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">Upload a clear photo of your skin</h2>
+                <p class="text-gray-600 mb-6">For best results, use natural lighting and capture a clear, well-lit image
+                    of your face or the skin area you'd like analyzed.</p>
+
+                <!-- Add camera/upload toggle -->
+                <div class="flex space-x-4 mb-6">
+                    <button type="button" id="upload-toggle"
+                        class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                        Upload Image
                     </button>
-                    <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-                        Analyze Image
+                    <button type="button" id="camera-toggle"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                        Take Photo
                     </button>
                 </div>
             </div>
 
-            <!-- Location Services -->
-            <div class="mt-6">
-                <h3 class="text-lg font-medium text-gray-900 mb-4">Enable Location Services (Optional)</h3>
-                <p class="text-sm text-gray-500 mb-4">Allow location access to find nearby stores that sell recommended products.</p>
-                <div class="flex items-center space-x-4">
-                    <button type="button" onclick="getLocation()" class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
-                        Enable Location
-                    </button>
-                    <span id="locationStatus" class="text-sm text-gray-500"></span>
-                </div>
-                <input type="hidden" name="latitude" id="latitude">
-                <input type="hidden" name="longitude" id="longitude">
-                <input type="hidden" name="radius" id="radius" value="5000">
+            <!-- File Upload Section -->
+            <div id="upload-section" class="flex items-center justify-center w-full">
+                <label for="skin_image"
+                    class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-xl cursor-pointer bg-gray-50 border-primary/30 hover:bg-primary/5 transition-colors duration-300">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6" id="upload-text">
+                        <svg class="w-10 h-10 mb-4 text-primary" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 20 16">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                        </svg>
+                        <p class="mb-2 text-sm text-gray-700"><span class="font-semibold">Click to upload</span> or
+                            drag and drop</p>
+                        <p class="text-xs text-gray-500">PNG, JPG or JPEG (MAX. 10MB)</p>
+                    </div>
+                    <div class="hidden flex-col items-center justify-center pt-5 pb-6" id="preview-container">
+                        <img id="preview-image" class="max-h-56 rounded" src="" alt="Preview">
+                        <p class="mt-2 text-sm text-gray-600">Click to change image</p>
+                    </div>
+                    <input id="skin_image" name="skin_image" type="file" class="hidden"
+                        accept="image/png, image/jpeg, image/jpg" />
+                </label>
             </div>
+
+            <!-- Camera Section -->
+            <div id="camera-section" class="hidden">
+                <div class="relative w-full h-64 rounded-xl overflow-hidden bg-gray-50 border-2 border-primary/30">
+                    <video id="camera-preview" class="w-full h-full object-cover" autoplay playsinline></video>
+                    <canvas id="camera-canvas" class="hidden absolute top-0 left-0 w-full h-full object-cover"></canvas>
+                    <div id="camera-preview-container" class="hidden absolute top-0 left-0 w-full h-full">
+                        <img id="camera-preview-image" class="w-full h-full object-cover" src="" alt="Camera Preview">
+                    </div>
+                    <div id="camera-controls" class="absolute bottom-4 left-0 right-0 flex justify-center space-x-4">
+                        <button type="button" id="capture-btn"
+                            class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                            Capture Photo
+                        </button>
+                        <button type="button" id="retake-btn"
+                            class="hidden px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                            Retake
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-200 pt-6 mt-6">
+                <h3 class="text-lg font-medium text-gray-800 mb-4">Share your location (optional)</h3>
+                <p class="text-sm text-gray-600 mb-4">Allow access to your location to find stores with recommended
+                    products nearby</p>
+
+                <div class="mb-4">
+                    <div class="flex items-center space-x-2">
+                        <button type="button" id="get-location-btn"
+                            class="text-primary bg-primary/10 hover:bg-primary/20 focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Use My Current Location
+                        </button>
+                        <span id="location-status" class="text-sm text-gray-500">Not shared</span>
+                    </div>
+                    <input type="hidden" id="latitude" name="latitude">
+                    <input type="hidden" id="longitude" name="longitude">
+                </div>
+
+                <div id="map-container" class="hidden">
+                    <p class="text-sm text-gray-600 mb-2">Your location (you can adjust by dragging the marker):</p>
+                    <div id="location-map" class="h-64 rounded-lg border border-gray-200 mb-4"></div>
+
+                    <div class="mb-4">
+                        <label for="radius" class="block text-sm font-medium text-gray-700 mb-1">Search radius for
+                            nearby stores:</label>
+                        <select id="radius" name="radius"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                            <option value="5000" selected>5 km</option>
+                            <option value="10000">10 km</option>
+                            <option value="15000">15 km</option>
+                            <option value="20000">20 km</option>
+                        </select>
+                        <p class="mt-1 text-xs text-gray-500">A larger radius may find more stores but might include
+                            ones further away</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="processing-indicator" class="hidden">
+                <div class="flex items-center justify-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <span class="ml-3 text-gray-600">Analyzing your skin...</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-4">
+                    <div id="progress-bar" class="bg-primary h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="flex items-start mb-4">
+                <div class="flex items-center h-5">
+                    <input id="consent" aria-describedby="consent-description" type="checkbox" value=""
+                        class="w-4 h-4 border border-primary/30 rounded bg-background focus:ring-3 focus:ring-primary/30"
+                        required>
+                </div>
+                <div class="ml-3 text-sm">
+                    <label for="consent" class="font-medium text-gray-800">Consent to analysis</label>
+                    <p id="consent-description" class="text-xs font-normal text-gray-500">I agree to let SkinCare AI
+                        analyze my skin data for product recommendations. My data will be handled according to the
+                        privacy policy.</p>
+                </div>
+            </div>
+
+            <button type="submit" id="analyze-button"
+                class="w-full text-white bg-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary/30 font-medium rounded-lg text-sm px-5 py-3 text-center shadow-lg shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1">Analyze
+                My Skin</button>
         </form>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <div class="bg-accent/10 p-6 rounded-xl border border-accent/20">
+            <h3 class="text-lg font-semibold mb-3 text-gray-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-accent" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Tips for Best Results
+            </h3>
+            <ul class="list-disc list-inside space-y-2 text-sm text-gray-600">
+                <li>Use natural daylight for accurate color capture</li>
+                <li>Remove makeup for better analysis of your actual skin</li>
+                <li>Take a front-facing photo with neutral expression</li>
+                <li>Ensure your face is clearly visible and centered</li>
+                <li>Avoid heavy shadows or overexposed areas</li>
+            </ul>
+        </div>
+
+        <div class="bg-secondary/10 p-6 rounded-xl border border-secondary/20">
+            <h3 class="text-lg font-semibold mb-3 text-gray-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-secondary" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+                What Our AI Analyzes
+            </h3>
+            <ul class="list-disc list-inside space-y-2 text-sm text-gray-600">
+                <li>Skin type classification (dry, oily, combination, normal)</li>
+                <li>Identification of specific skin concerns</li>
+                <li>Analysis of texture, tone, and hydration levels</li>
+                <li>Sensitive areas that need special attention</li>
+                <li>Matching your profile to effective ingredients</li>
+            </ul>
+            <p class="text-xs text-gray-500 mt-4 italic">Your photo is processed securely and is not stored longer
+                than needed for analysis.</p>
+        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    function previewImage(input) {
-        const preview = document.getElementById('imagePreview');
-        const uploadPrompt = document.getElementById('uploadPrompt');
-        const previewControls = document.getElementById('previewControls');
-        
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.classList.remove('hidden');
-                uploadPrompt.classList.add('hidden');
-                previewControls.classList.remove('hidden');
-            }
-            
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    
-    function retakePhoto() {
-        const preview = document.getElementById('imagePreview');
-        const uploadPrompt = document.getElementById('uploadPrompt');
-        const previewControls = document.getElementById('previewControls');
-        const fileInput = document.getElementById('skin_image');
-        
-        preview.classList.add('hidden');
-        uploadPrompt.classList.remove('hidden');
-        previewControls.classList.add('hidden');
-        fileInput.value = ''; // Clear the file input
-    }
-
-    function getLocation() {
-        const locationStatus = document.getElementById('locationStatus');
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('skin_image');
+        const previewImage = document.getElementById('preview-image');
+        const uploadText = document.getElementById('upload-text');
+        const previewContainer = document.getElementById('preview-container');
+        const analyzeForm = document.getElementById('analyze-form');
+        const analyzeButton = document.getElementById('analyze-button');
+        const processingIndicator = document.getElementById('processing-indicator');
+        const progressBar = document.getElementById('progress-bar');
+        const getLocationBtn = document.getElementById('get-location-btn');
+        const locationStatus = document.getElementById('location-status');
         const latitudeInput = document.getElementById('latitude');
         const longitudeInput = document.getElementById('longitude');
-        
-        if (navigator.geolocation) {
-            locationStatus.textContent = 'Getting location...';
-            
-            navigator.geolocation.getCurrentPosition(
-                function(position) {
-                    latitudeInput.value = position.coords.latitude;
-                    longitudeInput.value = position.coords.longitude;
-                    locationStatus.textContent = 'Location enabled ✓';
-                    locationStatus.classList.add('text-green-600');
-                },
-                function(error) {
-                    locationStatus.textContent = 'Location access denied';
-                    locationStatus.classList.add('text-red-600');
-                    console.error('Error getting location:', error);
+        const mapContainer = document.getElementById('map-container');
+
+        // Camera elements
+        const uploadSection = document.getElementById('upload-section');
+        const cameraSection = document.getElementById('camera-section');
+        const uploadToggle = document.getElementById('upload-toggle');
+        const cameraToggle = document.getElementById('camera-toggle');
+        const cameraPreview = document.getElementById('camera-preview');
+        const cameraCanvas = document.getElementById('camera-canvas');
+        const captureBtn = document.getElementById('capture-btn');
+        const retakeBtn = document.getElementById('retake-btn');
+        const cameraPreviewContainer = document.getElementById('camera-preview-container');
+        const cameraPreviewImage = document.getElementById('camera-preview-image');
+
+        let stream = null;
+        let marker;
+        let map;
+
+        // Toggle between upload and camera
+        uploadToggle.addEventListener('click', () => {
+            uploadSection.classList.remove('hidden');
+            cameraSection.classList.add('hidden');
+            uploadToggle.classList.add('bg-primary', 'text-white');
+            uploadToggle.classList.remove('bg-gray-200', 'text-gray-700');
+            cameraToggle.classList.add('bg-gray-200', 'text-gray-700');
+            cameraToggle.classList.remove('bg-primary', 'text-white');
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+        });
+
+        cameraToggle.addEventListener('click', async () => {
+            uploadSection.classList.add('hidden');
+            cameraSection.classList.remove('hidden');
+            cameraToggle.classList.add('bg-primary', 'text-white');
+            cameraToggle.classList.remove('bg-gray-200', 'text-gray-700');
+            uploadToggle.classList.add('bg-gray-200', 'text-gray-700');
+            uploadToggle.classList.remove('bg-primary', 'text-white');
+
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'user',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                });
+                cameraPreview.srcObject = stream;
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+                alert('Could not access camera. Please make sure you have granted camera permissions.');
+                uploadToggle.click(); // Switch back to upload
+            }
+        });
+
+        // Capture photo
+        captureBtn.addEventListener('click', () => {
+            const context = cameraCanvas.getContext('2d');
+            cameraCanvas.width = cameraPreview.videoWidth;
+            cameraCanvas.height = cameraPreview.videoHeight;
+            context.drawImage(cameraPreview, 0, 0);
+
+            // Convert canvas to blob
+            cameraCanvas.toBlob((blob) => {
+                const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                input.files = dataTransfer.files;
+
+                // Show preview
+                const previewUrl = URL.createObjectURL(blob);
+                cameraPreviewImage.src = previewUrl;
+                cameraPreviewContainer.classList.remove('hidden');
+                cameraPreview.classList.add('hidden');
+                captureBtn.classList.add('hidden');
+                retakeBtn.classList.remove('hidden');
+
+                // Stop camera stream
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
                 }
-            );
-        } else {
-            locationStatus.textContent = 'Geolocation is not supported by your browser';
-            locationStatus.classList.add('text-red-600');
-        }
-    }
+            }, 'image/jpeg', 0.95);
+        });
+
+        // Retake photo
+        retakeBtn.addEventListener('click', async () => {
+            cameraPreviewContainer.classList.add('hidden');
+            cameraPreview.classList.remove('hidden');
+            captureBtn.classList.remove('hidden');
+            retakeBtn.classList.add('hidden');
+
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'user',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                });
+                cameraPreview.srcObject = stream;
+            } catch (err) {
+                console.error('Error accessing camera:', err);
+                alert('Could not access camera. Please make sure you have granted camera permissions.');
+                uploadToggle.click(); // Switch back to upload
+            }
+        });
+
+        // Handle image preview for file upload
+        input.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.addEventListener('load', function () {
+                    previewImage.src = reader.result;
+                    uploadText.classList.add('hidden');
+                    previewContainer.classList.remove('hidden');
+                    previewContainer.classList.add('flex');
+                });
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Get location functionality with improved error handling
+        getLocationBtn.addEventListener('click', function () {
+            if (navigator.geolocation) {
+                locationStatus.textContent = "Accessing location...";
+                locationStatus.classList.add('text-yellow-500');
+                locationStatus.classList.remove('text-gray-500', 'text-green-500', 'text-red-500');
+
+                // Options for better geolocation accuracy
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                };
+
+                navigator.geolocation.getCurrentPosition(
+                    // Success callback
+                    function (position) {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+
+                        console.log("Location obtained:", latitude, longitude);
+
+                        // Update hidden form fields
+                        latitudeInput.value = latitude;
+                        longitudeInput.value = longitude;
+
+                        // Update status
+                        locationStatus.textContent = "Location shared";
+                        locationStatus.classList.add('text-green-500');
+                        locationStatus.classList.remove('text-yellow-500', 'text-gray-500', 'text-red-500');
+
+                        // Show map with location
+                        mapContainer.classList.remove('hidden');
+
+                        // Initialize or update map
+                        if (!map) {
+                            try {
+                                map = L.map('location-map').setView([latitude, longitude], 13);
+
+                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                }).addTo(map);
+
+                                marker = L.marker([latitude, longitude], {
+                                    draggable: true
+                                }).addTo(map);
+
+                                // Add a circle to show approximate search radius
+                                const radius = parseInt(document.getElementById('radius').value);
+                                L.circle([latitude, longitude], {
+                                    color: '#4F46E5',
+                                    fillColor: '#4F46E5',
+                                    fillOpacity: 0.1,
+                                    radius: radius // Use the selected radius
+                                }).addTo(map);
+
+                                // Update coordinates when marker is dragged
+                                marker.on('dragend', function (event) {
+                                    const position = marker.getLatLng();
+                                    latitudeInput.value = position.lat;
+                                    longitudeInput.value = position.lng;
+
+                                    // Remove existing circle
+                                    map.eachLayer(function (layer) {
+                                        if (layer instanceof L.Circle) {
+                                            map.removeLayer(layer);
+                                        }
+                                    });
+
+                                    // Add a new circle with the current radius
+                                    const radius = parseInt(document.getElementById('radius').value);
+                                    L.circle([position.lat, position.lng], {
+                                        color: '#4F46E5',
+                                        fillColor: '#4F46E5',
+                                        fillOpacity: 0.1,
+                                        radius: radius // Use the current radius value
+                                    }).addTo(map);
+                                });
+                            } catch (e) {
+                                console.error("Error initializing map:", e);
+                            }
+                        } else {
+                            map.setView([latitude, longitude], 13);
+                            marker.setLatLng([latitude, longitude]);
+                        }
+
+                        // Force map to recalculate size after becoming visible
+                        setTimeout(() => {
+                            try {
+                                map.invalidateSize();
+                            } catch (e) {
+                                console.error("Error invalidating map size:", e);
+                            }
+                        }, 100);
+                    },
+                    // Error callback with improved messaging
+                    function (error) {
+                        console.error('Error getting location:', error);
+
+                        let errorMessage = "Failed to get location";
+
+                        switch (error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage = "Location access denied";
+                                alert("Location access was denied. Please enable location services in your browser settings to find nearby cosmetics stores.");
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage = "Location unavailable";
+                                alert("Your location is currently unavailable. Please try again later or enter a location manually.");
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage = "Location request timed out";
+                                alert("Location request timed out. Please try again or check your internet connection.");
+                                break;
+                            case error.UNKNOWN_ERROR:
+                                errorMessage = "Unknown location error";
+                                break;
+                        }
+
+                        locationStatus.textContent = errorMessage;
+                        locationStatus.classList.add('text-red-500');
+                        locationStatus.classList.remove('text-yellow-500', 'text-gray-500', 'text-green-500');
+                    },
+                    options
+                );
+            } else {
+                locationStatus.textContent = "Geolocation not supported";
+                locationStatus.classList.add('text-red-500');
+                locationStatus.classList.remove('text-yellow-500', 'text-gray-500', 'text-green-500');
+                alert("Geolocation is not supported by this browser. You won't be able to find nearby cosmetics stores automatically.");
+            }
+        });
+
+        // Form submission
+        analyzeForm.addEventListener('submit', function (e) {
+            const fileInput = document.getElementById('skin_image');
+            const consentCheckbox = document.getElementById('consent');
+
+            // Validate file is selected
+            if (fileInput.files.length === 0) {
+                e.preventDefault();
+                alert("Please select an image to analyze.");
+                return false;
+            }
+
+            // Validate consent is checked
+            if (!consentCheckbox.checked) {
+                e.preventDefault();
+                alert("Please check the consent checkbox to continue.");
+                return false;
+            }
+
+            // Show processing indicator and disable button
+            processingIndicator.classList.remove('hidden');
+            analyzeButton.disabled = true;
+            analyzeButton.classList.add('opacity-50', 'cursor-not-allowed');
+
+            // Simulate progress for better UX
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                if (progress > 90) clearInterval(interval);
+                progressBar.style.width = `${progress}%`;
+            }, 500);
+
+            return true;
+        });
+
+        // Radius change handler
+        document.getElementById('radius').addEventListener('change', function () {
+            const radius = parseInt(this.value);
+            // Update circle radius if map is initialized
+            if (map) {
+                map.eachLayer(function (layer) {
+                    if (layer instanceof L.Circle) {
+                        map.removeLayer(layer);
+                    }
+                });
+
+                L.circle([latitudeInput.value, longitudeInput.value], {
+                    color: '#4F46E5',
+                    fillColor: '#4F46E5',
+                    fillOpacity: 0.1,
+                    radius: radius // radius in meters
+                }).addTo(map);
+            }
+        });
+    });
 </script>
 {% endblock %}
