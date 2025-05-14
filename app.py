@@ -157,21 +157,21 @@ def allowed_file(filename):
 # Function to get nearby stores using Geoapify API
 def get_nearby_stores(lat, lon, radius=5000, limit=10):
     try:
-    # Use valid categories supported by Geoapify API
-    categories = [
-        "commercial.health_and_beauty.cosmetics",
-        "commercial.health_and_beauty.pharmacy",
-        "commercial.health_and_beauty",
-        "commercial.chemist",
-        "commercial.department_store",
-        "commercial.shopping_mall",
-            "commercial.supermarket",
-    ]
-    
-    categories_str = ",".join(categories)
-    url = f"https://api.geoapify.com/v2/places?categories={categories_str}&filter=circle:{lon},{lat},{radius}&limit={limit}&apiKey={GEOAPIFY_API_KEY}"
-    
-    print(f"Requesting URL: {url}")
+        # Use valid categories supported by Geoapify API
+        categories = [
+            "commercial.health_and_beauty.cosmetics",
+            "commercial.health_and_beauty.pharmacy",
+            "commercial.health_and_beauty",
+            "commercial.chemist",
+            "commercial.department_store",
+            "commercial.shopping_mall",
+                "commercial.supermarket",
+        ]
+        
+        categories_str = ",".join(categories)
+        url = f"https://api.geoapify.com/v2/places?categories={categories_str}&filter=circle:{lon},{lat},{radius}&limit={limit}&apiKey={GEOAPIFY_API_KEY}"
+        
+        print(f"Requesting URL: {url}")
         print(
             f"Using Geoapify API key: {GEOAPIFY_API_KEY[:5]}...{GEOAPIFY_API_KEY[-5:] if len(GEOAPIFY_API_KEY) > 10 else ''}"
         )
