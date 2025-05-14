@@ -63,30 +63,39 @@
             <div id="camera-section" class="hidden">
                 <div class="relative w-full h-64 rounded-xl overflow-hidden bg-gray-50 border-2 border-primary/30">
                     <video id="camera-preview" class="w-full h-full object-cover" autoplay playsinline></video>
-                    <canvas id="camera-canvas" class="hidden"></canvas>
+                    <canvas id="camera-canvas" class="hidden absolute inset-0"></canvas>
                     <div id="camera-preview-container" class="absolute inset-0 hidden">
                         <img id="camera-preview-image" class="w-full h-full object-cover" src="" alt="Camera Preview">
                     </div>
                     <div id="camera-controls" class="absolute bottom-4 left-0 right-0 flex justify-center space-x-4">
                         <button type="button" id="capture-btn"
-                            class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none"
+                            class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors shadow-lg flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                             </svg>
-                            Capture Photo
+                            <span class="text-base font-medium">Capture Photo</span>
                         </button>
                         <button type="button" id="retake-btn"
-                            class="hidden px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" fill="none"
+                            class="hidden px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors shadow flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
-                            Retake Photo
+                            <span class="text-base font-medium">Retake Photo</span>
+                        </button>
+                        <button type="button" id="use-photo-btn"
+                            class="hidden px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span class="text-base font-medium">Use Photo</span>
                         </button>
                     </div>
                 </div>
@@ -233,12 +242,14 @@
         const cameraCanvas = document.getElementById('camera-canvas');
         const captureBtn = document.getElementById('capture-btn');
         const retakeBtn = document.getElementById('retake-btn');
+        const usePhotoBtn = document.getElementById('use-photo-btn');
         const cameraPreviewContainer = document.getElementById('camera-preview-container');
         const cameraPreviewImage = document.getElementById('camera-preview-image');
 
         let stream = null;
         let marker;
         let map;
+        let photoTaken = false;
 
         // Toggle between upload and camera
         uploadToggle.addEventListener('click', () => {
@@ -263,74 +274,183 @@
             uploadToggle.classList.remove('bg-primary', 'text-white');
 
             try {
+                // First stop any existing stream
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+
+                // Try to get the camera stream
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: {
-                        facingMode: 'user',
+                        facingMode: { ideal: 'user' },
                         width: { ideal: 1280 },
                         height: { ideal: 720 }
                     }
                 });
+
+                // Reset the UI to camera-ready state
                 cameraPreview.srcObject = stream;
                 cameraPreview.style.display = 'block';
                 cameraPreviewContainer.classList.add('hidden');
                 captureBtn.classList.remove('hidden');
                 retakeBtn.classList.add('hidden');
+                usePhotoBtn.classList.add('hidden');
+
+                // Ensure the video gets played (important for iOS)
+                cameraPreview.play().catch(e => {
+                    console.error("Error playing video:", e);
+                });
+
+                console.log("Camera stream started successfully");
             } catch (err) {
                 console.error('Error accessing camera:', err);
-                alert('Could not access camera. Please make sure you have granted camera permissions.');
+                alert('Could not access camera. Please make sure you have granted camera permissions or try using the upload option instead.');
                 uploadToggle.click(); // Switch back to upload
             }
         });
 
-        // Capture photo
+        // Capture photo with error handling
         captureBtn.addEventListener('click', () => {
-            const context = cameraCanvas.getContext('2d');
-            cameraCanvas.width = cameraPreview.videoWidth;
-            cameraCanvas.height = cameraPreview.videoHeight;
-            context.drawImage(cameraPreview, 0, 0);
+            try {
+                if (!cameraPreview.videoWidth) {
+                    console.error("Video stream not ready yet");
+                    return; // Don't proceed if video isn't ready
+                }
 
-            // Convert canvas to blob
-            cameraCanvas.toBlob((blob) => {
-                const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
-                input.files = dataTransfer.files;
+                // Make sure the canvas is correctly sized
+                const context = cameraCanvas.getContext('2d');
+                cameraCanvas.width = cameraPreview.videoWidth;
+                cameraCanvas.height = cameraPreview.videoHeight;
 
-                // Hide video preview and show captured image
-                cameraPreview.style.display = 'none';
-                cameraPreviewImage.src = URL.createObjectURL(blob);
-                cameraPreviewContainer.classList.remove('hidden');
-                captureBtn.classList.add('hidden');
-                retakeBtn.classList.remove('hidden');
+                // Draw the video frame to the canvas
+                context.drawImage(cameraPreview, 0, 0, cameraCanvas.width, cameraCanvas.height);
 
-                // Stop camera stream
+                // Convert canvas to blob
+                cameraCanvas.toBlob((blob) => {
+                    if (!blob) {
+                        console.error("Failed to create image blob");
+                        return;
+                    }
+
+                    const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    input.files = dataTransfer.files;
+
+                    // Show the captured image preview
+                    cameraPreviewImage.src = URL.createObjectURL(blob);
+                    cameraPreview.style.display = 'none';
+                    cameraPreviewContainer.classList.remove('hidden');
+
+                    // Update buttons
+                    captureBtn.classList.add('hidden');
+                    retakeBtn.classList.remove('hidden');
+                    usePhotoBtn.classList.remove('hidden');
+
+                    photoTaken = true;
+
+                    console.log("Photo captured successfully");
+                }, 'image/jpeg', 0.95);
+            } catch (e) {
+                console.error("Error capturing photo:", e);
+                alert("There was a problem capturing your photo. Please try again or use the upload option.");
+            }
+        });
+
+        // Retake photo with improved reliability
+        retakeBtn.addEventListener('click', async () => {
+            photoTaken = false;
+
+            try {
+                // First stop existing stream if any
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+
+                // Re-initialize the camera
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: { ideal: 'user' },
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                });
+
+                // Update UI
+                cameraPreview.srcObject = stream;
+                cameraPreview.style.display = 'block';
+                cameraPreviewContainer.classList.add('hidden');
+                captureBtn.classList.remove('hidden');
+                retakeBtn.classList.add('hidden');
+                usePhotoBtn.classList.add('hidden');
+
+                // Ensure video plays (for iOS)
+                cameraPreview.play().catch(e => {
+                    console.error("Error playing video on retake:", e);
+                });
+
+                console.log("Camera restarted for retake");
+            } catch (err) {
+                console.error('Error accessing camera for retake:', err);
+                alert('Could not restart camera. Please try again or use the upload option.');
+                uploadToggle.click(); // Switch back to upload as fallback
+            }
+        });
+
+        // New "Use this photo" button handler
+        usePhotoBtn.addEventListener('click', () => {
+            if (photoTaken) {
+                console.log("Photo accepted for analysis");
+                // Optionally focus on the next part of the form or submit directly
+                // The file is already attached to the input, so technically ready to submit
+
+                // Cleanup camera resources
                 if (stream) {
                     stream.getTracks().forEach(track => track.stop());
                     stream = null;
                 }
-            }, 'image/jpeg', 0.95);
+            }
         });
 
-        // Retake photo
-        retakeBtn.addEventListener('click', async () => {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: 'user',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    }
-                });
-                cameraPreview.srcObject = stream;
-                cameraPreview.style.display = 'block';
-                cameraPreviewContainer.classList.add('hidden');
-                captureBtn.classList.remove('hidden');
-                retakeBtn.classList.add('hidden');
-            } catch (err) {
-                console.error('Error accessing camera:', err);
-                alert('Could not access camera. Please make sure you have granted camera permissions.');
-                uploadToggle.click(); // Switch back to upload
+        // Form submission with additional validation for camera photos
+        analyzeForm.addEventListener('submit', function (e) {
+            const fileInput = document.getElementById('skin_image');
+            const consentCheckbox = document.getElementById('consent');
+
+            // Validate file is selected
+            if (fileInput.files.length === 0) {
+                e.preventDefault();
+                alert("Please select an image or take a photo to analyze.");
+                return false;
             }
+
+            // Validate consent is checked
+            if (!consentCheckbox.checked) {
+                e.preventDefault();
+                alert("Please check the consent checkbox to continue.");
+                return false;
+            }
+
+            // Clean up camera resources on submit
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+
+            // Show processing indicator and disable button
+            processingIndicator.classList.remove('hidden');
+            analyzeButton.disabled = true;
+            analyzeButton.classList.add('opacity-50', 'cursor-not-allowed');
+
+            // Simulate progress for better UX
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                if (progress > 90) clearInterval(interval);
+                progressBar.style.width = `${progress}%`;
+            }, 500);
+
+            return true;
         });
 
         // Handle image preview for file upload
@@ -479,41 +599,6 @@
                 locationStatus.classList.remove('text-yellow-500', 'text-gray-500', 'text-green-500');
                 alert("Geolocation is not supported by this browser. You won't be able to find nearby cosmetics stores automatically.");
             }
-        });
-
-        // Form submission
-        analyzeForm.addEventListener('submit', function (e) {
-            const fileInput = document.getElementById('skin_image');
-            const consentCheckbox = document.getElementById('consent');
-
-            // Validate file is selected
-            if (fileInput.files.length === 0) {
-                e.preventDefault();
-                alert("Please select an image or take a photo to analyze.");
-                return false;
-            }
-
-            // Validate consent is checked
-            if (!consentCheckbox.checked) {
-                e.preventDefault();
-                alert("Please check the consent checkbox to continue.");
-                return false;
-            }
-
-            // Show processing indicator and disable button
-            processingIndicator.classList.remove('hidden');
-            analyzeButton.disabled = true;
-            analyzeButton.classList.add('opacity-50', 'cursor-not-allowed');
-
-            // Simulate progress for better UX
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 5;
-                if (progress > 90) clearInterval(interval);
-                progressBar.style.width = `${progress}%`;
-            }, 500);
-
-            return true;
         });
 
         // Radius change handler
