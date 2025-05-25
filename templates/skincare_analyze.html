@@ -272,22 +272,22 @@
             cameraToggle.classList.remove('bg-gray-200', 'text-gray-700');
             uploadToggle.classList.add('bg-gray-200', 'text-gray-700');
             uploadToggle.classList.remove('bg-primary', 'text-white');
-
+        
             try {
                 // First stop any existing stream
                 if (stream) {
                     stream.getTracks().forEach(track => track.stop());
                 }
-
-                // Try to get the camera stream
+        
+                // Try to get the camera stream with better constraints
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: {
                         facingMode: { ideal: 'user' },
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
+                        width: { ideal: 1280, min: 640 },
+                        height: { ideal: 720, min: 480 }
                     }
                 });
-
+        
                 // Reset the UI to camera-ready state
                 cameraPreview.srcObject = stream;
                 cameraPreview.style.display = 'block';
@@ -295,67 +295,110 @@
                 captureBtn.classList.remove('hidden');
                 retakeBtn.classList.add('hidden');
                 usePhotoBtn.classList.add('hidden');
-
-                // Ensure the video gets played (important for iOS)
-                cameraPreview.play().catch(e => {
-                    console.error("Error playing video:", e);
+                
+                // Reset photo taken flag
+                photoTaken = false;
+        
+                // Wait for video metadata to load before allowing capture
+                cameraPreview.addEventListener('loadedmetadata', () => {
+                    console.log("Video metadata loaded, ready for capture");
+                    console.log("Video dimensions:", cameraPreview.videoWidth, "x", cameraPreview.videoHeight);
                 });
-
+        
+                // Ensure the video gets played (important for iOS)
+                await cameraPreview.play();
                 console.log("Camera stream started successfully");
+                
             } catch (err) {
                 console.error('Error accessing camera:', err);
-                alert('Could not access camera. Please make sure you have granted camera permissions or try using the upload option instead.');
+                let errorMessage = 'Could not access camera. ';
+                
+                if (err.name === 'NotAllowedError') {
+                    errorMessage += 'Please allow camera permissions and try again.';
+                } else if (err.name === 'NotFoundError') {
+                    errorMessage += 'No camera found on this device.';
+                } else if (err.name === 'NotReadableError') {
+                    errorMessage += 'Camera is already in use by another application.';
+                } else {
+                    errorMessage += 'Please try using the upload option instead.';
+                }
+                
+                alert(errorMessage);
                 uploadToggle.click(); // Switch back to upload
             }
         });
+        
 
         // Capture photo with error handling
         captureBtn.addEventListener('click', () => {
             try {
-                if (!cameraPreview.videoWidth) {
+                // Wait for video to be ready
+                if (!cameraPreview.videoWidth || !cameraPreview.videoHeight) {
                     console.error("Video stream not ready yet");
-                    return; // Don't proceed if video isn't ready
+                    // Try again after a short delay
+                    setTimeout(() => {
+                        if (cameraPreview.videoWidth && cameraPreview.videoHeight) {
+                            capturePhoto();
+                        }
+                    }, 100);
+                    return;
                 }
-
-                // Make sure the canvas is correctly sized
-                const context = cameraCanvas.getContext('2d');
-                cameraCanvas.width = cameraPreview.videoWidth;
-                cameraCanvas.height = cameraPreview.videoHeight;
-
-                // Draw the video frame to the canvas
-                context.drawImage(cameraPreview, 0, 0, cameraCanvas.width, cameraCanvas.height);
-
-                // Convert canvas to blob
-                cameraCanvas.toBlob((blob) => {
-                    if (!blob) {
-                        console.error("Failed to create image blob");
-                        return;
-                    }
-
-                    const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    input.files = dataTransfer.files;
-
-                    // Show the captured image preview
-                    cameraPreviewImage.src = URL.createObjectURL(blob);
-                    cameraPreview.style.display = 'none';
-                    cameraPreviewContainer.classList.remove('hidden');
-
-                    // Update buttons
-                    captureBtn.classList.add('hidden');
-                    retakeBtn.classList.remove('hidden');
-                    usePhotoBtn.classList.remove('hidden');
-
-                    photoTaken = true;
-
-                    console.log("Photo captured successfully");
-                }, 'image/jpeg', 0.95);
+                
+                capturePhoto();
             } catch (e) {
                 console.error("Error capturing photo:", e);
                 alert("There was a problem capturing your photo. Please try again or use the upload option.");
             }
         });
+
+        function capturePhoto() {
+            const context = cameraCanvas.getContext('2d');
+            
+            // Set canvas dimensions to match video
+            cameraCanvas.width = cameraPreview.videoWidth;
+            cameraCanvas.height = cameraPreview.videoHeight;
+            
+            // Draw the current video frame to canvas
+            context.drawImage(cameraPreview, 0, 0, cameraCanvas.width, cameraCanvas.height);
+            
+            // Convert canvas to data URL
+            const dataURL = cameraCanvas.toDataURL('image/jpeg', 0.95);
+            
+            // Convert data URL to blob and create file
+            fetch(dataURL)
+                .then(res => res.blob())
+                .then(blob => {
+                    // Create a file from the blob
+                    const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
+                    
+                    // Create a new FileList-like object
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    input.files = dataTransfer.files;
+                    
+                    // Show the captured image preview
+                    cameraPreviewImage.src = dataURL;
+                    
+                    // Update UI elements
+                    cameraPreview.style.display = 'none';
+                    cameraPreviewContainer.classList.remove('hidden');
+                    
+                    // Update buttons
+                    captureBtn.classList.add('hidden');
+                    retakeBtn.classList.remove('hidden');
+                    usePhotoBtn.classList.remove('hidden');
+                    
+                    photoTaken = true;
+                    
+                    console.log("Photo captured successfully");
+                })
+                .catch(error => {
+                    console.error("Error creating file from captured photo:", error);
+                    alert("There was a problem processing your photo. Please try again.");
+                });
+        }
+
+
 
         // Retake photo with improved reliability
         retakeBtn.addEventListener('click', async () => {
