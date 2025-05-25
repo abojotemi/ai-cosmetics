@@ -8,7 +8,7 @@
     integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
     crossorigin="" />
 <style>
-    #camera-preview {
+    #camera-preview, #captured-photo {
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -26,22 +26,66 @@
         background: #f3f4f6;
         border-radius: 0.75rem;
         overflow: hidden;
+        width: 100%;
+        max-width: 640px;
+        margin: 0 auto;
     }
 
-    .camera-overlay {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 1rem;
-        background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-    }
-
-    .photo-actions {
+    .camera-controls {
         display: flex;
-        gap: 1rem;
+        flex-wrap: wrap;
+        gap: 0.75rem;
         justify-content: center;
         padding: 1rem 0;
+        max-width: 640px;
+        margin: 0 auto;
+    }
+
+    .camera-controls button {
+        flex: 1;
+        min-width: 120px;
+        max-width: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .camera-controls button svg {
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-right: 0.5rem;
+    }
+
+    @media (max-width: 640px) {
+        .camera-controls {
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 0.75rem;
+        }
+        
+        .camera-controls button {
+            flex: none;
+            min-width: auto;
+            max-width: none;
+            width: 100%;
+        }
+    }
+
+    .photo-taken-overlay {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        background: rgba(34, 197, 94, 0.9);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        backdrop-filter: blur(4px);
     }
 </style>
 {% endblock %}
@@ -91,43 +135,51 @@
                 <!-- Camera Section -->
                 <div id="camera-section" class="hidden">
                     <div class="camera-container">
-                        <video id="camera-preview" autoplay playsinline></video>
-                        <canvas id="camera-canvas"></canvas>
-                        <div id="camera-preview-container" class="hidden">
-                            <img id="camera-preview-image" class="w-full h-full object-cover" src="" alt="Camera Preview">
+                        <!-- Live camera preview -->
+                        <video id="camera-preview" autoplay playsinline class="w-full h-full object-cover"></video>
+                        
+                        <!-- Captured photo display -->
+                        <img id="captured-photo" class="hidden w-full h-full object-cover" src="" alt="Captured Photo">
+                        
+                        <!-- Photo taken indicator -->
+                        <div id="photo-taken-indicator" class="hidden photo-taken-overlay">
+                            <svg class="w-3 h-3 inline mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Photo Captured
                         </div>
-                        <div class="camera-overlay">
-                            <div class="photo-actions">
-                                <button type="button" id="capture-btn"
-                                    class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors shadow-lg">
-                                    <svg class="w-6 h-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <circle cx="12" cy="12" r="9" stroke-width="2"/>
-                                        <circle cx="12" cy="12" r="3" stroke-width="2"/>
-                                    </svg>
-                                    Capture Photo
-                                </button>
-                                <button type="button" id="retake-btn" class="hidden px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
-                                    <svg class="w-6 h-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                                    </svg>
-                                    Retake
-                                </button>
-                                <button type="button" id="use-photo-btn" class="hidden px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700">
-                                    <svg class="w-6 h-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Use Photo
-                                </button>
-                                <button type="button" id="delete-photo-btn" class="hidden px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                                    <svg class="w-6 h-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
+                        
+                        <!-- Hidden canvas for photo capture -->
+                        <canvas id="camera-canvas" class="hidden"></canvas>
+                    </div>
+
+                    <!-- Camera Controls -->
+                    <div class="camera-controls">
+                        <!-- When camera is active -->
+                        <button type="button" id="capture-btn"
+                            class="bg-primary text-white hover:bg-primary-dark shadow-lg">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <circle cx="12" cy="12" r="9" stroke-width="2"/>
+                                <circle cx="12" cy="12" r="3" stroke-width="2"/>
+                            </svg>
+                            Take Photo
+                        </button>
+
+                        <!-- When photo is captured -->
+                        <button type="button" id="retake-btn" class="hidden bg-gray-500 text-white hover:bg-gray-600">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
+                            Retake
+                        </button>
+
+                        <button type="button" id="use-photo-btn" class="hidden bg-green-600 text-white hover:bg-green-700">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Use Photo
+                        </button>
                     </div>
                 </div>
 
@@ -264,10 +316,11 @@ document.addEventListener('DOMContentLoaded', () => {
         cameraToggle: document.getElementById('camera-toggle'),
         cameraPreview: document.getElementById('camera-preview'),
         cameraCanvas: document.getElementById('camera-canvas'),
+        capturedPhoto: document.getElementById('captured-photo'),
+        photoTakenIndicator: document.getElementById('photo-taken-indicator'),
         captureBtn: document.getElementById('capture-btn'),
         retakeBtn: document.getElementById('retake-btn'),
         usePhotoBtn: document.getElementById('use-photo-btn'),
-        deletePhotoBtn: document.getElementById('delete-photo-btn'),
         analyzeButton: document.getElementById('analyze-button'),
         processingIndicator: document.getElementById('processing-indicator'),
         progressBar: document.getElementById('progress-bar'),
@@ -292,6 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.cameraToggle.classList.add('bg-gray-200', 'text-gray-700');
         elements.cameraToggle.classList.remove('bg-primary', 'text-white');
         stopCamera();
+        resetCameraState();
     });
 
     elements.cameraToggle.addEventListener('click', async () => {
@@ -321,12 +375,19 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             elements.cameraPreview.srcObject = stream;
+            await elements.cameraPreview.play();
+            
+            // Show camera preview, hide captured photo
+            elements.cameraPreview.classList.remove('hidden');
+            elements.capturedPhoto.classList.add('hidden');
+            elements.photoTakenIndicator.classList.add('hidden');
+            
+            // Show capture button, hide other buttons
             elements.captureBtn.classList.remove('hidden');
             elements.retakeBtn.classList.add('hidden');
             elements.usePhotoBtn.classList.add('hidden');
-            elements.deletePhotoBtn.classList.add('hidden');
             
-            await elements.cameraPreview.play();
+            photoTaken = false;
         } catch (err) {
             console.error('Error accessing camera:', err);
             alert('Could not access camera. Please check permissions or use the upload option.');
@@ -339,6 +400,18 @@ document.addEventListener('DOMContentLoaded', () => {
             stream.getTracks().forEach(track => track.stop());
             stream = null;
         }
+        elements.cameraPreview.srcObject = null;
+    }
+
+    function resetCameraState() {
+        photoTaken = false;
+        elements.cameraPreview.classList.remove('hidden');
+        elements.capturedPhoto.classList.add('hidden');
+        elements.photoTakenIndicator.classList.add('hidden');
+        elements.captureBtn.classList.remove('hidden');
+        elements.retakeBtn.classList.add('hidden');
+        elements.usePhotoBtn.classList.add('hidden');
+        elements.fileInput.value = '';
     }
 
     // Capture photo
@@ -351,7 +424,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const dataURL = elements.cameraCanvas.toDataURL('image/jpeg', 0.8);
         
-        // Convert data URL to File object
+        // Show captured photo in place of camera preview
+        elements.capturedPhoto.src = dataURL;
+        elements.cameraPreview.classList.add('hidden');
+        elements.capturedPhoto.classList.remove('hidden');
+        elements.photoTakenIndicator.classList.remove('hidden');
+        
+        // Convert data URL to File object for form submission
         fetch(dataURL)
             .then(res => res.blob())
             .then(blob => {
@@ -366,32 +445,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 elements.fileInput.files = dataTransfer.files;
                 
                 photoTaken = true;
+                
+                // Update button states
                 elements.captureBtn.classList.add('hidden');
                 elements.retakeBtn.classList.remove('hidden');
                 elements.usePhotoBtn.classList.remove('hidden');
-                elements.deletePhotoBtn.classList.remove('hidden');
+                
+                // Stop camera stream to save resources
+                stopCamera();
             });
     });
 
     // Retake photo
     elements.retakeBtn.addEventListener('click', async () => {
-        photoTaken = false;
+        resetCameraState();
         await startCamera();
     });
 
-    // Use photo
+    // Use photo (switch to upload section with photo ready)
     elements.usePhotoBtn.addEventListener('click', () => {
         if (photoTaken) {
-            stopCamera();
+            // Show the captured photo in upload section as well
+            const dataURL = elements.capturedPhoto.src;
+            elements.previewImage.src = dataURL;
+            elements.uploadText.classList.add('hidden');
+            elements.previewContainer.classList.remove('hidden');
+            
+            // Switch to upload tab
             elements.uploadToggle.click();
         }
-    });
-
-    // Delete photo
-    elements.deletePhotoBtn.addEventListener('click', async () => {
-        photoTaken = false;
-        elements.fileInput.value = '';
-        await startCamera();
     });
 
     // File upload preview
@@ -412,6 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.getLocationBtn.addEventListener('click', () => {
         if (navigator.geolocation) {
             elements.locationStatus.textContent = "Accessing location...";
+            elements.locationStatus.classList.remove('text-green-500', 'text-red-500');
             elements.locationStatus.classList.add('text-yellow-500');
 
             navigator.geolocation.getCurrentPosition(
@@ -423,6 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     elements.latitudeInput.value = latitude;
                     elements.longitudeInput.value = longitude;
                     elements.locationStatus.textContent = "Location shared";
+                    elements.locationStatus.classList.remove('text-yellow-500', 'text-red-500');
                     elements.locationStatus.classList.add('text-green-500');
 
                     // Initialize or update map
@@ -433,6 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 (error) => {
                     console.error('Error getting location:', error);
                     elements.locationStatus.textContent = "Location access failed";
+                    elements.locationStatus.classList.remove('text-yellow-500', 'text-green-500');
                     elements.locationStatus.classList.add('text-red-500');
                     alert("Could not access location. Please check your browser settings.");
                 }
