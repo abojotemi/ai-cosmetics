@@ -7,55 +7,43 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
     integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
     crossorigin="" />
-    <style>
+<style>
+    #camera-preview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background-color: #000;
+        border-radius: 0.75rem;
+    }
 
-/* Add this CSS to ensure proper video display */
-#camera-preview {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    background-color: #000;
-    border-radius: 0.75rem;
-}
+    #camera-canvas {
+        display: none;
+    }
 
-#camera-canvas {
-    position: absolute;
-    top: -9999px; /* Hide but keep accessible for capture */
-    left: -9999px;
-}
+    .camera-container {
+        position: relative;
+        aspect-ratio: 4/3;
+        background: #f3f4f6;
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
 
-#camera-section {
-    position: relative;
-}
+    .camera-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 1rem;
+        background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    }
 
-#camera-controls {
-    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-    padding-top: 2rem;
-}
-
-/* Ensure buttons are visible */
-#camera-controls button {
-    z-index: 10;
-    position: relative;
-}
-
-/* Loading state for camera */
-.camera-loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #1f2937;
-    color: white;
-    font-size: 1rem;
-}
-
-.camera-loading::before {
-    content: "Loading camera...";
-}
-    </style>
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-    crossorigin=""></script>
+    .photo-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        padding: 1rem 0;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -66,10 +54,9 @@
         <form action="/analyze" method="post" enctype="multipart/form-data" class="space-y-6" id="analyze-form">
             <div>
                 <h2 class="text-xl font-semibold mb-4 text-gray-800">Upload a clear photo of your skin</h2>
-                <p class="text-gray-600 mb-6">For best results, use natural lighting and capture a clear, well-lit image
-                    of your face or the skin area you'd like analyzed.</p>
+                <p class="text-gray-600 mb-6">For best results, use natural lighting and capture a clear, well-lit image.</p>
 
-                <!-- Add camera/upload toggle -->
+                <!-- Image Capture Method Toggle -->
                 <div class="flex space-x-4 mb-6">
                     <button type="button" id="upload-toggle"
                         class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
@@ -80,152 +67,147 @@
                         Take Photo
                     </button>
                 </div>
-            </div>
 
-            <!-- File Upload Section -->
-            <div id="upload-section" class="flex items-center justify-center w-full">
-                <label for="skin_image"
-                    class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-xl cursor-pointer bg-gray-50 border-primary/30 hover:bg-primary/5 transition-colors duration-300">
-                    <div class="flex flex-col items-center justify-center pt-5 pb-6" id="upload-text">
-                        <svg class="w-10 h-10 mb-4 text-primary" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 20 16">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
-                        </svg>
-                        <p class="mb-2 text-sm text-gray-700"><span class="font-semibold">Click to upload</span> or
-                            drag and drop</p>
-                        <p class="text-xs text-gray-500">PNG, JPG or JPEG (MAX. 10MB)</p>
-                    </div>
-                    <div class="hidden flex-col items-center justify-center pt-5 pb-6" id="preview-container">
-                        <img id="preview-image" class="max-h-56 rounded" src="" alt="Preview">
-                        <p class="mt-2 text-sm text-gray-600">Click to change image</p>
-                    </div>
-                    <input id="skin_image" name="skin_image" type="file" class="hidden"
-                        accept="image/png, image/jpeg, image/jpg" />
-                </label>
-            </div>
+                <!-- Upload Section -->
+                <div id="upload-section" class="flex items-center justify-center w-full">
+                    <label for="skin_image"
+                        class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-xl cursor-pointer bg-gray-50 border-primary/30 hover:bg-primary/5">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6" id="upload-text">
+                            <svg class="w-10 h-10 mb-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-700"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                            <p class="text-xs text-gray-500">PNG, JPG or JPEG (MAX. 10MB)</p>
+                        </div>
+                        <div class="hidden flex-col items-center justify-center" id="preview-container">
+                            <img id="preview-image" class="max-h-56 rounded" src="" alt="Preview">
+                            <p class="mt-2 text-sm text-gray-600">Click to change image</p>
+                        </div>
+                        <input id="skin_image" name="skin_image" type="file" class="hidden" accept="image/png, image/jpeg, image/jpg" />
+                    </label>
+                </div>
 
-            <!-- Camera Section -->
-            <div id="camera-section" class="hidden">
-                <div class="relative w-full h-64 rounded-xl overflow-hidden bg-gray-50 border-2 border-primary/30">
-                    <video id="camera-preview" class="w-full h-full object-cover" autoplay playsinline></video>
-                    <canvas id="camera-canvas" class="hidden absolute inset-0"></canvas>
-                    <div id="camera-preview-container" class="absolute inset-0 hidden">
-                        <img id="camera-preview-image" class="w-full h-full object-cover" src="" alt="Camera Preview">
-                    </div>
-                    <div id="camera-controls" class="absolute bottom-4 left-0 right-0 flex justify-center space-x-4">
-                        <button type="button" id="capture-btn"
-                            class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors shadow-lg flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            <span class="text-base font-medium">Capture Photo</span>
-                        </button>
-                        <button type="button" id="retake-btn"
-                            class="hidden px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors shadow flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                            <span class="text-base font-medium">Retake Photo</span>
-                        </button>
-                        <button type="button" id="use-photo-btn"
-                            class="hidden px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span class="text-base font-medium">Use Photo</span>
-                        </button>
+                <!-- Camera Section -->
+                <div id="camera-section" class="hidden">
+                    <div class="camera-container">
+                        <video id="camera-preview" autoplay playsinline></video>
+                        <canvas id="camera-canvas"></canvas>
+                        <div id="camera-preview-container" class="hidden">
+                            <img id="camera-preview-image" class="w-full h-full object-cover" src="" alt="Camera Preview">
+                        </div>
+                        <div class="camera-overlay">
+                            <div class="photo-actions">
+                                <button type="button" id="capture-btn"
+                                    class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors shadow-lg">
+                                    <svg class="w-6 h-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <circle cx="12" cy="12" r="9" stroke-width="2"/>
+                                        <circle cx="12" cy="12" r="3" stroke-width="2"/>
+                                    </svg>
+                                    Capture Photo
+                                </button>
+                                <button type="button" id="retake-btn" class="hidden px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300">
+                                    <svg class="w-6 h-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                    Retake
+                                </button>
+                                <button type="button" id="use-photo-btn" class="hidden px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                                    <svg class="w-6 h-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Use Photo
+                                </button>
+                                <button type="button" id="delete-photo-btn" class="hidden px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                                    <svg class="w-6 h-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="border-t border-gray-200 pt-6 mt-6">
-                <h3 class="text-lg font-medium text-gray-800 mb-4">Share your location (optional)</h3>
-                <p class="text-sm text-gray-600 mb-4">Allow access to your location to find stores with recommended
-                    products nearby</p>
-
-                <div class="mb-4">
-                    <div class="flex items-center space-x-2">
+                <!-- Location Section -->
+                <div class="border-t border-gray-200 pt-6 mt-6">
+                    <h3 class="text-lg font-medium text-gray-800 mb-4">Share your location (optional)</h3>
+                    <p class="text-sm text-gray-600 mb-4">Allow access to find stores with recommended products nearby</p>
+                    
+                    <div class="flex items-center space-x-2 mb-4">
                         <button type="button" id="get-location-btn"
-                            class="text-primary bg-primary/10 hover:bg-primary/20 focus:ring-4 focus:outline-none focus:ring-primary/50 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            class="text-primary bg-primary/10 hover:bg-primary/20 focus:ring-4 focus:ring-primary/50 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                     d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                             Use My Current Location
                         </button>
                         <span id="location-status" class="text-sm text-gray-500">Not shared</span>
                     </div>
+                    
+                    <div id="map-container" class="hidden">
+                        <div id="location-map" class="h-64 rounded-lg border border-gray-200 mb-4"></div>
+                        <div class="mb-4">
+                            <label for="radius" class="block text-sm font-medium text-gray-700 mb-1">Search radius:</label>
+                            <select id="radius" name="radius"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
+                                <option value="5000" selected>5 km</option>
+                                <option value="10000">10 km</option>
+                                <option value="15000">15 km</option>
+                                <option value="20000">20 km</option>
+                            </select>
+                        </div>
+                    </div>
                     <input type="hidden" id="latitude" name="latitude">
                     <input type="hidden" id="longitude" name="longitude">
                 </div>
 
-                <div id="map-container" class="hidden">
-                    <p class="text-sm text-gray-600 mb-2">Your location (you can adjust by dragging the marker):</p>
-                    <div id="location-map" class="h-64 rounded-lg border border-gray-200 mb-4"></div>
-
-                    <div class="mb-4">
-                        <label for="radius" class="block text-sm font-medium text-gray-700 mb-1">Search radius for
-                            nearby stores:</label>
-                        <select id="radius" name="radius"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5">
-                            <option value="5000" selected>5 km</option>
-                            <option value="10000">10 km</option>
-                            <option value="15000">15 km</option>
-                            <option value="20000">20 km</option>
-                        </select>
-                        <p class="mt-1 text-xs text-gray-500">A larger radius may find more stores but might include
-                            ones further away</p>
+                <!-- Processing Indicator -->
+                <div id="processing-indicator" class="hidden">
+                    <div class="flex items-center justify-center">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                        <span class="ml-3 text-gray-600">Analyzing your skin...</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mt-4">
+                        <div id="progress-bar" class="bg-primary h-2.5 rounded-full" style="width: 0%"></div>
                     </div>
                 </div>
-            </div>
 
-            <div id="processing-indicator" class="hidden">
-                <div class="flex items-center justify-center">
-                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                    <span class="ml-3 text-gray-600">Analyzing your skin...</span>
+                <!-- Consent Checkbox -->
+                <div class="flex items-start mb-4">
+                    <div class="flex items-center h-5">
+                        <input id="consent" aria-describedby="consent-description" type="checkbox" required
+                            class="w-4 h-4 border border-primary/30 rounded bg-gray-50 focus:ring-3 focus:ring-primary/30">
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label for="consent" class="font-medium text-gray-800">Consent to analysis</label>
+                        <p id="consent-description" class="text-xs font-normal text-gray-500">
+                            I agree to let SkinCare AI analyze my skin data for product recommendations.
+                            My data will be handled according to the privacy policy.
+                        </p>
+                    </div>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-4">
-                    <div id="progress-bar" class="bg-primary h-2.5 rounded-full" style="width: 0%"></div>
-                </div>
-            </div>
 
-            <div class="flex items-start mb-4">
-                <div class="flex items-center h-5">
-                    <input id="consent" aria-describedby="consent-description" type="checkbox" value=""
-                        class="w-4 h-4 border border-primary/30 rounded bg-background focus:ring-3 focus:ring-primary/30"
-                        required>
-                </div>
-                <div class="ml-3 text-sm">
-                    <label for="consent" class="font-medium text-gray-800">Consent to analysis</label>
-                    <p id="consent-description" class="text-xs font-normal text-gray-500">I agree to let SkinCare AI
-                        analyze my skin data for product recommendations. My data will be handled according to the
-                        privacy policy.</p>
-                </div>
+                <!-- Submit Button -->
+                <button type="submit" id="analyze-button"
+                    class="w-full text-white bg-primary hover:bg-primary-dark focus:ring-4 focus:ring-primary/30 font-medium rounded-lg text-sm px-5 py-3 text-center shadow-lg shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1">
+                    Analyze My Skin
+                </button>
             </div>
-
-            <button type="submit" id="analyze-button"
-                class="w-full text-white bg-primary hover:bg-primary-dark focus:ring-4 focus:outline-none focus:ring-primary/30 font-medium rounded-lg text-sm px-5 py-3 text-center shadow-lg shadow-primary/20 transition-all duration-300 transform hover:-translate-y-1">Analyze
-                My Skin</button>
         </form>
     </div>
 
+    <!-- Info Sections -->
     <div class="grid md:grid-cols-2 gap-8 mb-12">
+        <!-- Tips Section -->
         <div class="bg-accent/10 p-6 rounded-xl border border-accent/20">
             <h3 class="text-lg font-semibold mb-3 text-gray-800 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-accent" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
+                <svg class="h-5 w-5 mr-2 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -240,10 +222,10 @@
             </ul>
         </div>
 
+        <!-- Analysis Info Section -->
         <div class="bg-secondary/10 p-6 rounded-xl border border-secondary/20">
             <h3 class="text-lg font-semibold mb-3 text-gray-800 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-secondary" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor">
+                <svg class="h-5 w-5 mr-2 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
                 What Our AI Analyzes
@@ -255,577 +237,279 @@
                 <li>Sensitive areas that need special attention</li>
                 <li>Matching your profile to effective ingredients</li>
             </ul>
-            <p class="text-xs text-gray-500 mt-4 italic">Your photo is processed securely and is not stored longer
-                than needed for analysis.</p>
+            <p class="text-xs text-gray-500 mt-4 italic">
+                Your photo is processed securely and is not stored longer than needed for analysis.
+            </p>
         </div>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize all elements
+    const elements = {
+        form: document.getElementById('analyze-form'),
+        fileInput: document.getElementById('skin_image'),
+        previewImage: document.getElementById('preview-image'),
+        uploadText: document.getElementById('upload-text'),
+        previewContainer: document.getElementById('preview-container'),
+        uploadSection: document.getElementById('upload-section'),
+        cameraSection: document.getElementById('camera-section'),
+        uploadToggle: document.getElementById('upload-toggle'),
+        cameraToggle: document.getElementById('camera-toggle'),
+        cameraPreview: document.getElementById('camera-preview'),
+        cameraCanvas: document.getElementById('camera-canvas'),
+        captureBtn: document.getElementById('capture-btn'),
+        retakeBtn: document.getElementById('retake-btn'),
+        usePhotoBtn: document.getElementById('use-photo-btn'),
+        deletePhotoBtn: document.getElementById('delete-photo-btn'),
+        analyzeButton: document.getElementById('analyze-button'),
+        processingIndicator: document.getElementById('processing-indicator'),
+        progressBar: document.getElementById('progress-bar'),
+        getLocationBtn: document.getElementById('get-location-btn'),
+        locationStatus: document.getElementById('location-status'),
+        mapContainer: document.getElementById('map-container'),
+        latitudeInput: document.getElementById('latitude'),
+        longitudeInput: document.getElementById('longitude')
+    };
 
-// Add this at the top of your script section for debugging
-console.log("Camera support check:");
-console.log("getUserMedia supported:", !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia));
-console.log("User agent:", navigator.userAgent);
+    let stream = null;
+    let map = null;
+    let marker = null;
+    let photoTaken = false;
 
-// Check for HTTPS (required for camera access)
-if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
-    console.warn("Camera access requires HTTPS. Current protocol:", location.protocol);
-}
-    document.addEventListener('DOMContentLoaded', () => {
-        const input = document.getElementById('skin_image');
-        const previewImage = document.getElementById('preview-image');
-        const uploadText = document.getElementById('upload-text');
-        const previewContainer = document.getElementById('preview-container');
-        const analyzeForm = document.getElementById('analyze-form');
-        const analyzeButton = document.getElementById('analyze-button');
-        const processingIndicator = document.getElementById('processing-indicator');
-        const progressBar = document.getElementById('progress-bar');
-        const getLocationBtn = document.getElementById('get-location-btn');
-        const locationStatus = document.getElementById('location-status');
-        const latitudeInput = document.getElementById('latitude');
-        const longitudeInput = document.getElementById('longitude');
-        const mapContainer = document.getElementById('map-container');
+    // Toggle between upload and camera
+    elements.uploadToggle.addEventListener('click', () => {
+        elements.uploadSection.classList.remove('hidden');
+        elements.cameraSection.classList.add('hidden');
+        elements.uploadToggle.classList.add('bg-primary', 'text-white');
+        elements.uploadToggle.classList.remove('bg-gray-200', 'text-gray-700');
+        elements.cameraToggle.classList.add('bg-gray-200', 'text-gray-700');
+        elements.cameraToggle.classList.remove('bg-primary', 'text-white');
+        stopCamera();
+    });
 
-        // Camera elements
-        const uploadSection = document.getElementById('upload-section');
-        const cameraSection = document.getElementById('camera-section');
-        const uploadToggle = document.getElementById('upload-toggle');
-        const cameraToggle = document.getElementById('camera-toggle');
-        const cameraPreview = document.getElementById('camera-preview');
-        const cameraCanvas = document.getElementById('camera-canvas');
-        const captureBtn = document.getElementById('capture-btn');
-        const retakeBtn = document.getElementById('retake-btn');
-        const usePhotoBtn = document.getElementById('use-photo-btn');
-        const cameraPreviewContainer = document.getElementById('camera-preview-container');
-        const cameraPreviewImage = document.getElementById('camera-preview-image');
+    elements.cameraToggle.addEventListener('click', async () => {
+        elements.uploadSection.classList.add('hidden');
+        elements.cameraSection.classList.remove('hidden');
+        elements.cameraToggle.classList.add('bg-primary', 'text-white');
+        elements.cameraToggle.classList.remove('bg-gray-200', 'text-gray-700');
+        elements.uploadToggle.classList.add('bg-gray-200', 'text-gray-700');
+        elements.uploadToggle.classList.remove('bg-primary', 'text-white');
+        
+        await startCamera();
+    });
 
-        let stream = null;
-        let marker;
-        let map;
-        let photoTaken = false;
-
-        // Toggle between upload and camera
-        uploadToggle.addEventListener('click', () => {
-            uploadSection.classList.remove('hidden');
-            cameraSection.classList.add('hidden');
-            uploadToggle.classList.add('bg-primary', 'text-white');
-            uploadToggle.classList.remove('bg-gray-200', 'text-gray-700');
-            cameraToggle.classList.add('bg-gray-200', 'text-gray-700');
-            cameraToggle.classList.remove('bg-primary', 'text-white');
+    // Camera functions
+    async function startCamera() {
+        try {
             if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
+                stopCamera();
             }
-        });
 
-        cameraToggle.addEventListener('click', async () => {
-            uploadSection.classList.add('hidden');
-            cameraSection.classList.remove('hidden');
-            cameraToggle.classList.add('bg-primary', 'text-white');
-            cameraToggle.classList.remove('bg-gray-200', 'text-gray-700');
-            uploadToggle.classList.add('bg-gray-200', 'text-gray-700');
-            uploadToggle.classList.remove('bg-primary', 'text-white');
-        
-            try {
-                // First stop any existing stream
-                if (stream) {
-                    stream.getTracks().forEach(track => track.stop());
-                    stream = null;
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: 'user',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
                 }
-        
-                // Reset UI to loading state
-                cameraPreview.style.display = 'block';
-                cameraPreviewContainer.classList.add('hidden');
-                captureBtn.classList.add('hidden');
-                retakeBtn.classList.add('hidden');
-                usePhotoBtn.classList.add('hidden');
-        
-                console.log("Requesting camera access...");
-        
-                // Try multiple constraint configurations
-                let constraints = [
-                    // First try: Basic constraints
-                    {
-                        video: {
-                            facingMode: 'user',
-                            width: { ideal: 640 },
-                            height: { ideal: 480 }
-                        }
-                    },
-                    // Fallback: Minimal constraints
-                    {
-                        video: {
-                            facingMode: 'user'
-                        }
-                    },
-                    // Last resort: Any camera
-                    {
-                        video: true
-                    }
-                ];
-        
-                let streamObtained = false;
-                
-                for (let constraint of constraints) {
-                    try {
-                        console.log("Trying constraint:", constraint);
-                        stream = await navigator.mediaDevices.getUserMedia(constraint);
-                        streamObtained = true;
-                        break;
-                    } catch (err) {
-                        console.log("Constraint failed:", err.message);
-                        continue;
-                    }
-                }
-        
-                if (!streamObtained) {
-                    throw new Error("Unable to access camera with any configuration");
-                }
-        
-                // Set up the video stream
-                cameraPreview.srcObject = stream;
-                
-                // Reset photo taken flag
-                photoTaken = false;
-        
-                // Wait for video to be ready before showing capture button
-                const videoReady = new Promise((resolve, reject) => {
-                    const timeout = setTimeout(() => {
-                        reject(new Error("Video loading timeout"));
-                    }, 5000);
-        
-                    cameraPreview.addEventListener('loadedmetadata', () => {
-                        clearTimeout(timeout);
-                        console.log("Video metadata loaded, dimensions:", cameraPreview.videoWidth, "x", cameraPreview.videoHeight);
-                        resolve();
-                    }, { once: true });
-        
-                    cameraPreview.addEventListener('canplay', () => {
-                        clearTimeout(timeout);
-                        console.log("Video can play");
-                        resolve();
-                    }, { once: true });
-                });
-        
-                // Ensure the video plays
-                await cameraPreview.play();
-                console.log("Video play started");
-        
-                // Wait for video to be ready
-                await videoReady;
-        
-                // Show the capture button only after video is ready
-                captureBtn.classList.remove('hidden');
-                
-                console.log("Camera stream started successfully");
-                
-            } catch (err) {
-                console.error('Error accessing camera:', err);
-                
-                // Reset UI state
-                cameraPreview.style.display = 'none';
-                captureBtn.classList.add('hidden');
-                
-                let errorMessage = 'Could not access camera. ';
-                
-                if (err.name === 'NotAllowedError') {
-                    errorMessage += 'Please allow camera permissions and try again.';
-                } else if (err.name === 'NotFoundError') {
-                    errorMessage += 'No camera found on this device.';
-                } else if (err.name === 'NotReadableError') {
-                    errorMessage += 'Camera is already in use by another application.';
-                } else if (err.name === 'OverconstrainedError') {
-                    errorMessage += 'Camera constraints not supported.';
-                } else {
-                    errorMessage += 'Please try using the upload option instead.';
-                }
-                
-                alert(errorMessage);
-                uploadToggle.click(); // Switch back to upload
-            }
-        });
-        
+            });
 
-        // Capture photo with error handling
-        // Capture photo with improved error handling
-captureBtn.addEventListener('click', () => {
-    console.log("Capture button clicked");
-    
-    // Check if video is ready
-    if (!cameraPreview.videoWidth || !cameraPreview.videoHeight || cameraPreview.readyState < 2) {
-        console.log("Video not ready, current state:", {
-            videoWidth: cameraPreview.videoWidth,
-            videoHeight: cameraPreview.videoHeight,
-            readyState: cameraPreview.readyState
-        });
-        
-        // Try again after a short delay
-        setTimeout(() => {
-            if (cameraPreview.videoWidth && cameraPreview.videoHeight && cameraPreview.readyState >= 2) {
-                capturePhoto();
-            } else {
-                alert("Camera is not ready yet. Please wait a moment and try again.");
-            }
-        }, 500);
-        return;
+            elements.cameraPreview.srcObject = stream;
+            elements.captureBtn.classList.remove('hidden');
+            elements.retakeBtn.classList.add('hidden');
+            elements.usePhotoBtn.classList.add('hidden');
+            elements.deletePhotoBtn.classList.add('hidden');
+            
+            await elements.cameraPreview.play();
+        } catch (err) {
+            console.error('Error accessing camera:', err);
+            alert('Could not access camera. Please check permissions or use the upload option.');
+            elements.uploadToggle.click();
+        }
     }
-    
-    capturePhoto();
-});
 
-function capturePhoto() {
-    try {
-        console.log("Starting photo capture...");
-        
-        const context = cameraCanvas.getContext('2d');
-        
-        // Set canvas dimensions to match video
-        const videoWidth = cameraPreview.videoWidth;
-        const videoHeight = cameraPreview.videoHeight;
-        
-        console.log("Video dimensions:", videoWidth, "x", videoHeight);
-        
-        if (videoWidth === 0 || videoHeight === 0) {
-            throw new Error("Invalid video dimensions");
+    function stopCamera() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
         }
+    }
+
+    // Capture photo
+    elements.captureBtn.addEventListener('click', () => {
+        const context = elements.cameraCanvas.getContext('2d');
+        elements.cameraCanvas.width = elements.cameraPreview.videoWidth;
+        elements.cameraCanvas.height = elements.cameraPreview.videoHeight;
         
-        cameraCanvas.width = videoWidth;
-        cameraCanvas.height = videoHeight;
+        context.drawImage(elements.cameraPreview, 0, 0);
         
-        // Clear canvas first
-        context.clearRect(0, 0, videoWidth, videoHeight);
+        const dataURL = elements.cameraCanvas.toDataURL('image/jpeg', 0.8);
         
-        // Draw the current video frame to canvas
-        context.drawImage(cameraPreview, 0, 0, videoWidth, videoHeight);
-        
-        // Convert canvas to data URL with good quality
-        const dataURL = cameraCanvas.toDataURL('image/jpeg', 0.9);
-        
-        if (dataURL === 'data:,') {
-            throw new Error("Failed to capture image data");
-        }
-        
-        console.log("Image captured, data URL length:", dataURL.length);
-        
-        // Convert data URL to blob and create file
+        // Convert data URL to File object
         fetch(dataURL)
-            .then(res => {
-                if (!res.ok) throw new Error("Failed to create blob");
-                return res.blob();
-            })
+            .then(res => res.blob())
             .then(blob => {
-                console.log("Blob created, size:", blob.size);
-                
-                if (blob.size === 0) {
-                    throw new Error("Empty image captured");
-                }
-                
-                // Create a file from the blob
-                const file = new File([blob], 'camera-capture.jpg', { 
+                const file = new File([blob], 'camera-capture.jpg', {
                     type: 'image/jpeg',
                     lastModified: Date.now()
                 });
-                
+
                 // Create a new FileList-like object
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
-                input.files = dataTransfer.files;
-                
-                // Show the captured image preview
-                cameraPreviewImage.src = dataURL;
-                
-                // Update UI elements
-                cameraPreview.style.display = 'none';
-                cameraPreviewContainer.classList.remove('hidden');
-                
-                // Update buttons
-                captureBtn.classList.add('hidden');
-                retakeBtn.classList.remove('hidden');
-                usePhotoBtn.classList.remove('hidden');
+                elements.fileInput.files = dataTransfer.files;
                 
                 photoTaken = true;
-                
-                console.log("Photo captured and processed successfully");
-            })
-            .catch(error => {
-                console.error("Error creating file from captured photo:", error);
-                alert("There was a problem processing your photo. Please try again.");
+                elements.captureBtn.classList.add('hidden');
+                elements.retakeBtn.classList.remove('hidden');
+                elements.usePhotoBtn.classList.remove('hidden');
+                elements.deletePhotoBtn.classList.remove('hidden');
             });
-            
-    } catch (error) {
-        console.error("Error in capturePhoto:", error);
-        alert("Failed to capture photo. Please try again or use the upload option.");
-    }
-}
-
-
-
-        // Retake photo with improved reliability
-        retakeBtn.addEventListener('click', async () => {
-            photoTaken = false;
-
-            try {
-                // First stop existing stream if any
-                if (stream) {
-                    stream.getTracks().forEach(track => track.stop());
-                }
-
-                // Re-initialize the camera
-                stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: { ideal: 'user' },
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    }
-                });
-
-                // Update UI
-                cameraPreview.srcObject = stream;
-                cameraPreview.style.display = 'block';
-                cameraPreviewContainer.classList.add('hidden');
-                captureBtn.classList.remove('hidden');
-                retakeBtn.classList.add('hidden');
-                usePhotoBtn.classList.add('hidden');
-
-                // Ensure video plays (for iOS)
-                cameraPreview.play().catch(e => {
-                    console.error("Error playing video on retake:", e);
-                });
-
-                console.log("Camera restarted for retake");
-            } catch (err) {
-                console.error('Error accessing camera for retake:', err);
-                alert('Could not restart camera. Please try again or use the upload option.');
-                uploadToggle.click(); // Switch back to upload as fallback
-            }
-        });
-
-        // New "Use this photo" button handler
-        usePhotoBtn.addEventListener('click', () => {
-            if (photoTaken) {
-                console.log("Photo accepted for analysis");
-                // Optionally focus on the next part of the form or submit directly
-                // The file is already attached to the input, so technically ready to submit
-
-                // Cleanup camera resources
-                if (stream) {
-                    stream.getTracks().forEach(track => track.stop());
-                    stream = null;
-                }
-            }
-        });
-
-        // Form submission with additional validation for camera photos
-        analyzeForm.addEventListener('submit', function (e) {
-            const fileInput = document.getElementById('skin_image');
-            const consentCheckbox = document.getElementById('consent');
-
-            // Validate file is selected
-            if (fileInput.files.length === 0) {
-                e.preventDefault();
-                alert("Please select an image or take a photo to analyze.");
-                return false;
-            }
-
-            // Validate consent is checked
-            if (!consentCheckbox.checked) {
-                e.preventDefault();
-                alert("Please check the consent checkbox to continue.");
-                return false;
-            }
-
-            // Clean up camera resources on submit
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
-
-            // Show processing indicator and disable button
-            processingIndicator.classList.remove('hidden');
-            analyzeButton.disabled = true;
-            analyzeButton.classList.add('opacity-50', 'cursor-not-allowed');
-
-            // Simulate progress for better UX
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 5;
-                if (progress > 90) clearInterval(interval);
-                progressBar.style.width = `${progress}%`;
-            }, 500);
-
-            return true;
-        });
-
-        // Handle image preview for file upload
-        input.addEventListener('change', function () {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.addEventListener('load', function () {
-                    previewImage.src = reader.result;
-                    uploadText.classList.add('hidden');
-                    previewContainer.classList.remove('hidden');
-                    previewContainer.classList.add('flex');
-                });
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // Get location functionality with improved error handling
-        getLocationBtn.addEventListener('click', function () {
-            if (navigator.geolocation) {
-                locationStatus.textContent = "Accessing location...";
-                locationStatus.classList.add('text-yellow-500');
-                locationStatus.classList.remove('text-gray-500', 'text-green-500', 'text-red-500');
-
-                // Options for better geolocation accuracy
-                const options = {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                };
-
-                navigator.geolocation.getCurrentPosition(
-                    // Success callback
-                    function (position) {
-                        const latitude = position.coords.latitude;
-                        const longitude = position.coords.longitude;
-
-                        console.log("Location obtained:", latitude, longitude);
-
-                        // Update hidden form fields
-                        latitudeInput.value = latitude;
-                        longitudeInput.value = longitude;
-
-                        // Update status
-                        locationStatus.textContent = "Location shared";
-                        locationStatus.classList.add('text-green-500');
-                        locationStatus.classList.remove('text-yellow-500', 'text-gray-500', 'text-red-500');
-
-                        // Show map with location
-                        mapContainer.classList.remove('hidden');
-
-                        // Initialize or update map
-                        if (!map) {
-                            try {
-                                map = L.map('location-map').setView([latitude, longitude], 13);
-
-                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                }).addTo(map);
-
-                                marker = L.marker([latitude, longitude], {
-                                    draggable: true
-                                }).addTo(map);
-
-                                // Add a circle to show approximate search radius
-                                const radius = parseInt(document.getElementById('radius').value);
-                                L.circle([latitude, longitude], {
-                                    color: '#4F46E5',
-                                    fillColor: '#4F46E5',
-                                    fillOpacity: 0.1,
-                                    radius: radius // Use the selected radius
-                                }).addTo(map);
-
-                                // Update coordinates when marker is dragged
-                                marker.on('dragend', function (event) {
-                                    const position = marker.getLatLng();
-                                    latitudeInput.value = position.lat;
-                                    longitudeInput.value = position.lng;
-
-                                    // Remove existing circle
-                                    map.eachLayer(function (layer) {
-                                        if (layer instanceof L.Circle) {
-                                            map.removeLayer(layer);
-                                        }
-                                    });
-
-                                    // Add a new circle with the current radius
-                                    const radius = parseInt(document.getElementById('radius').value);
-                                    L.circle([position.lat, position.lng], {
-                                        color: '#4F46E5',
-                                        fillColor: '#4F46E5',
-                                        fillOpacity: 0.1,
-                                        radius: radius // Use the current radius value
-                                    }).addTo(map);
-                                });
-                            } catch (e) {
-                                console.error("Error initializing map:", e);
-                            }
-                        } else {
-                            map.setView([latitude, longitude], 13);
-                            marker.setLatLng([latitude, longitude]);
-                        }
-
-                        // Force map to recalculate size after becoming visible
-                        setTimeout(() => {
-                            try {
-                                map.invalidateSize();
-                            } catch (e) {
-                                console.error("Error invalidating map size:", e);
-                            }
-                        }, 100);
-                    },
-                    // Error callback with improved messaging
-                    function (error) {
-                        console.error('Error getting location:', error);
-
-                        let errorMessage = "Failed to get location";
-
-                        switch (error.code) {
-                            case error.PERMISSION_DENIED:
-                                errorMessage = "Location access denied";
-                                alert("Location access was denied. Please enable location services in your browser settings to find nearby cosmetics stores.");
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                errorMessage = "Location unavailable";
-                                alert("Your location is currently unavailable. Please try again later or enter a location manually.");
-                                break;
-                            case error.TIMEOUT:
-                                errorMessage = "Location request timed out";
-                                alert("Location request timed out. Please try again or check your internet connection.");
-                                break;
-                            case error.UNKNOWN_ERROR:
-                                errorMessage = "Unknown location error";
-                                break;
-                        }
-
-                        locationStatus.textContent = errorMessage;
-                        locationStatus.classList.add('text-red-500');
-                        locationStatus.classList.remove('text-yellow-500', 'text-gray-500', 'text-green-500');
-                    },
-                    options
-                );
-            } else {
-                locationStatus.textContent = "Geolocation not supported";
-                locationStatus.classList.add('text-red-500');
-                locationStatus.classList.remove('text-yellow-500', 'text-gray-500', 'text-green-500');
-                alert("Geolocation is not supported by this browser. You won't be able to find nearby cosmetics stores automatically.");
-            }
-        });
-
-        // Radius change handler
-        document.getElementById('radius').addEventListener('change', function () {
-            const radius = parseInt(this.value);
-            // Update circle radius if map is initialized
-            if (map) {
-                map.eachLayer(function (layer) {
-                    if (layer instanceof L.Circle) {
-                        map.removeLayer(layer);
-                    }
-                });
-
-                L.circle([latitudeInput.value, longitudeInput.value], {
-                    color: '#4F46E5',
-                    fillColor: '#4F46E5',
-                    fillOpacity: 0.1,
-                    radius: radius // radius in meters
-                }).addTo(map);
-            }
-        });
     });
+
+    // Retake photo
+    elements.retakeBtn.addEventListener('click', async () => {
+        photoTaken = false;
+        await startCamera();
+    });
+
+    // Use photo
+    elements.usePhotoBtn.addEventListener('click', () => {
+        if (photoTaken) {
+            stopCamera();
+            elements.uploadToggle.click();
+        }
+    });
+
+    // Delete photo
+    elements.deletePhotoBtn.addEventListener('click', async () => {
+        photoTaken = false;
+        elements.fileInput.value = '';
+        await startCamera();
+    });
+
+    // File upload preview
+    elements.fileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.addEventListener('load', function() {
+                elements.previewImage.src = reader.result;
+                elements.uploadText.classList.add('hidden');
+                elements.previewContainer.classList.remove('hidden');
+            });
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Location handling
+    elements.getLocationBtn.addEventListener('click', () => {
+        if (navigator.geolocation) {
+            elements.locationStatus.textContent = "Accessing location...";
+            elements.locationStatus.classList.add('text-yellow-500');
+
+            navigator.geolocation.getCurrentPosition(
+                // Success callback
+                (position) => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    elements.latitudeInput.value = latitude;
+                    elements.longitudeInput.value = longitude;
+                    elements.locationStatus.textContent = "Location shared";
+                    elements.locationStatus.classList.add('text-green-500');
+
+                    // Initialize or update map
+                    elements.mapContainer.classList.remove('hidden');
+                    initializeMap(latitude, longitude);
+                },
+                // Error callback
+                (error) => {
+                    console.error('Error getting location:', error);
+                    elements.locationStatus.textContent = "Location access failed";
+                    elements.locationStatus.classList.add('text-red-500');
+                    alert("Could not access location. Please check your browser settings.");
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by this browser");
+        }
+    });
+
+    // Initialize map
+    function initializeMap(latitude, longitude) {
+        if (!map) {
+            map = L.map('location-map').setView([latitude, longitude], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            marker = L.marker([latitude, longitude], {
+                draggable: true
+            }).addTo(map);
+
+            // Update coordinates when marker is dragged
+            marker.on('dragend', function(event) {
+                const position = marker.getLatLng();
+                elements.latitudeInput.value = position.lat;
+                elements.longitudeInput.value = position.lng;
+                updateSearchRadius();
+            });
+
+            updateSearchRadius();
+        } else {
+            map.setView([latitude, longitude], 13);
+            marker.setLatLng([latitude, longitude]);
+        }
+    }
+
+    // Update search radius circle
+    function updateSearchRadius() {
+        const radius = parseInt(document.getElementById('radius').value);
+        map.eachLayer((layer) => {
+            if (layer instanceof L.Circle) {
+                map.removeLayer(layer);
+            }
+        });
+
+        L.circle([elements.latitudeInput.value, elements.longitudeInput.value], {
+            color: '#4F46E5',
+            fillColor: '#4F46E5',
+            fillOpacity: 0.1,
+            radius: radius
+        }).addTo(map);
+    }
+
+    // Form submission
+    elements.form.addEventListener('submit', function(e) {
+        if (!elements.fileInput.files.length) {
+            e.preventDefault();
+            alert("Please select an image or take a photo first.");
+            return;
+        }
+
+        elements.processingIndicator.classList.remove('hidden');
+        elements.analyzeButton.disabled = true;
+        
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 15;
+            if (progress > 95) {
+                progress = 95;
+                clearInterval(interval);
+            }
+            elements.progressBar.style.width = progress + '%';
+        }, 500);
+    });
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', stopCamera);
+});
 </script>
 {% endblock %}
