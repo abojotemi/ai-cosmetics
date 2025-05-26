@@ -67,7 +67,7 @@ def get_store_type(categories):
 load_dotenv()
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "static/uploads"
-app.config["ALLOWED_EXTENSIONS"] = {"png", "jpg", "jpeg"}
+app.config["ALLOWED_EXTENSIONS"] = {"png", "jpg", "jpeg", "webp", "heic", "heif"}
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "default-key-for-dev")
 app.config["MAX_CONTENT_LENGTH"] = 10 * 1024 * 1024
 app.config["CONTENT_FILE"] = "static/content/site_content.json"
