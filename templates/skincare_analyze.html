@@ -447,14 +447,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 elements.fileInput.files = dataTransfer.files;
                 
                 photoTaken = true;
-                
+            // Stop camera stream to save resources
+            stopCamera();
+
+            // Automatically switch to upload section with photo ready
+            elements.previewImage.src = dataURL;
+            elements.uploadText.classList.add('hidden');
+            elements.previewContainer.classList.remove('hidden');
+            elements.uploadToggle.click();
                 // Update button states
-                elements.captureBtn.classList.add('hidden');
-                elements.retakeBtn.classList.remove('hidden');
-                elements.usePhotoBtn.classList.remove('hidden');
+                //elements.captureBtn.classList.add('hidden');
+                //elements.retakeBtn.classList.remove('hidden');
+                //elements.usePhotoBtn.classList.remove('hidden');
                 
                 // Stop camera stream to save resources
-                stopCamera();
+                //stopCamera();
             });
     });
 
